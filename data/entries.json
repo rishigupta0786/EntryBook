@@ -1,0 +1,35 @@
+[
+  {
+    "entryDataId": 1,
+    "partyId": 1,
+    "partyName": "rishi",
+    "productId": 4,
+    "productName": "p4",
+    "tanch": 10,
+    "weight": 5000,
+    "wastage": 10,
+    "calculatedValue": 1000
+  },
+  {
+    "entryDataId": 2,
+    "partyId": 1,
+    "partyName": "rishi",
+    "productId": 1,
+    "productName": "p1",
+    "tanch": 80,
+    "weight": 1000,
+    "wastage": 10,
+    "calculatedValue": 900
+  },
+  {
+    "entryDataId": 3,
+    "partyId": 1,
+    "partyName": "rishi",
+    "productId": 1,
+    "productName": "p1",
+    "tanch": 80,
+    "weight": 5000,
+    "wastage": 10,
+    "calculatedValue": 4500
+  }
+]
