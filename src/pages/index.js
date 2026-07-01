@@ -3,7 +3,7 @@ import ProductModal from '../components/ProductModal';
 import PartyModal from '../components/PartyModal';
 import EntryModal from '../components/EntryModal';
 import { Container, Typography, Button, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Menu, MenuItem, TextField } from '@mui/material';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -310,8 +310,7 @@ const HomePage = () => {
   const rows = entries.map(entry => ({
     ...entry,
     partyName: parties.find(p => p.partyId === entry.partyId)?.partyName || 'N/A',
-  productName: products.find(p => p.productId === entry.productId)?.productName || 'N/A',
-    ...entry,
+    productName: products.find(p => p.productId === entry.productId)?.productName || 'N/A',
   }));
 
   const partyMenuItems = [
@@ -403,15 +402,21 @@ const HomePage = () => {
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={10}
-          rowsPerPageOptions={[10]}
-          disableSelectionOnClick
           getRowId={(row) => row.entryDataId}
-          components={{ Toolbar: GridToolbar }}
+          disableRowSelectionOnClick
+          showToolbar
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              csvOptions: {
+                fileName: "entries",
+              },
+            },
+          }}
           sx={{
             borderRadius: 2,
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-            '& .MuiDataGrid-cell': {
+            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+            "& .MuiDataGrid-cell": {
               py: 2,
             },
           }}
