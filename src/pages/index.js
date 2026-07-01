@@ -251,19 +251,19 @@ const HomePage = () => {
       field: 'netWeight',
       headerName: 'Net Weight (g)',
       type: 'number',
-      width: 110,
+      width: 150,
     },
     {
       field: 'tanch',
       headerName: 'Tanch',
       type: 'number',
-      width: 110,
+      width: 150,
     },
     {
       field: 'wastage',
       headerName: 'Wastage',
       type: 'number',
-      width: 110,
+      width: 150,
     },
     {
       field: 'calculatedValue',
@@ -324,39 +324,56 @@ const HomePage = () => {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 700 }}>
-        EntryBook
-      </Typography>
-      
-      {/* Main Dashboard Card */}
-      <Paper sx={{ p: { xs: 2, md: 4 }, borderRadius: 2, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-        {/* Responsive Action Bar - stacks vertically on mobile */}
-        <Box sx={{ 
-          mb: 4, 
-          display: 'flex', 
-          flexWrap: 'wrap', 
-          gap: 2,
-          flexDirection: { xs: 'column', sm: 'row' }
-        }}>
+    <Box sx={{
+      minHeight: '100vh',
+      bgcolor: 'background.default',
+      p: { xs: 2, md: 4 },
+      color: 'text.primary',
+    }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h3" component="h1" sx={{ fontWeight: 700, m: 0 }}>
+          EntryBook
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
           <Button 
             variant="contained" 
             onClick={() => { setEditingEntry(null); setIsEntryModalOpen(true); }}
-            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' },
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 20px rgba(144, 202, 249, 0.4)',
+              },
+            }}
           >
             Add Entry
           </Button>
           <Button 
             variant="outlined" 
             onClick={(e) => handleMenuClick(e, partyMenuItems)}
-            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' },
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 20px rgba(144, 202, 249, 0.4)',
+              },
+            }}
           >
             Parties
           </Button>
           <Button 
             variant="outlined" 
             onClick={(e) => handleMenuClick(e, productMenuItems)}
-            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' },
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 20px rgba(144, 202, 249, 0.4)',
+              },
+            }}
           >
             Products
           </Button>
@@ -372,7 +389,8 @@ const HomePage = () => {
             ))}
           </Menu>
         </Box>
-
+      </Box>
+      
       <ProductModal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
@@ -416,13 +434,16 @@ const HomePage = () => {
           sx={{
             borderRadius: 2,
             boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-            "& .MuiDataGrid-cell": {
-              py: 2,
+            
+            "& .MuiDataGrid-toolbarContainer": {
+              color: 'text.primary',
+            },
+            "& .MuiDataGrid-columnHeader": {
+              color: 'text.primary',
             },
           }}
         />
       </Box>
-      </Paper> {/* Close main dashboard card */}
       <Dialog open={isViewProductsOpen} onClose={() => setIsViewProductsOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>All Products</DialogTitle>
         <DialogContent>
@@ -566,7 +587,7 @@ const HomePage = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 

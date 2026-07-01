@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
-  Select, MenuItem, FormControl, InputLabel, Grid
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
+  Autocomplete,
 } from '@mui/material';
 
-const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData }) => {
+const EntryModal = ({
+  isOpen,
+  onClose,
+  onAddEntry,
+  parties,
+  products,
+  entryData,
+}) => {
   const [selectedParty, setSelectedParty] = useState('');
   const [selectedProduct, setSelectedProduct] = useState('');
   const [netWeight, setNetWeight] = useState('');
@@ -14,24 +31,27 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
   const isEditing = entryData != null;
 
   useEffect(() => {
-    if (isOpen) {
-      if (isEditing) {
-        setSelectedParty(entryData.partyId || '');
-        setSelectedProduct(entryData.productId || '');
-        setNetWeight(entryData.netWeight || '');
-        setTanch(entryData.tanch || '');
-        setWastage(entryData.wastage || '');
-      } else {
-        setSelectedParty('');
-        setSelectedProduct('');
-        setNetWeight('');
-        setTanch('');
-        setWastage('');
-      }
+    if (!isOpen) return;
+
+    if (isEditing) {
+      setSelectedParty(entryData.partyId || '');
+      setSelectedProduct(entryData.productId || '');
+      setNetWeight(entryData.netWeight || '');
+      setTanch(entryData.tanch || '');
+      setWastage(entryData.wastage || '');
+    } else {
+      setSelectedParty('');
+      setSelectedProduct('');
+      setNetWeight('');
+      setTanch('');
+      setWastage('');
     }
   }, [isOpen, entryData, isEditing]);
 
-  const calculatedValue = (parseFloat(netWeight) * (parseFloat(tanch) + parseFloat(wastage))) / 100;
+  const calculatedValue =
+    ((parseFloat(netWeight) || 0) *
+      ((parseFloat(tanch) || 0) + (parseFloat(wastage) || 0))) /
+    100;
 
   const handleSave = () => {
     onAddEntry({
@@ -40,149 +60,143 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
       netWeight: parseFloat(netWeight) || 0,
       tanch: parseFloat(tanch) || 0,
       wastage: parseFloat(wastage) || 0,
-      calculatedValue: calculatedValue || 0,
+      calculatedValue,
     });
   };
 
   const handlePartySelect = (partyId) => {
     setSelectedParty(partyId);
-    if (selectedProduct && parties) {
-      const party = parties.find(p => p.partyId === Number(partyId));
-      if (party && party.products) {
-        const productInfo = party.products.find(p => p.productId === Number(selectedProduct));
-        if (productInfo) {
-          setTanch(productInfo.tanch || '0');
-          setWastage(productInfo.wastage || '0');
-        } else {
-          setTanch('0');
-          setWastage('0');
-        }
-      }
-    }
+
+    if (!selectedProduct) return;
+
+    const party = parties.find((p) => p.partyId === Number(partyId));
+
+    const productInfo = party?.products?.find(
+      (p) => p.productId === Number(selectedProduct)
+    );
+
+    setTanch(productInfo?.tanch || '0');
+    setWastage(productInfo?.wastage || '0');
   };
 
   const handleProductSelect = (productId) => {
     setSelectedProduct(productId);
-    if (selectedParty && parties) {
-      const party = parties.find(p => p.partyId === Number(selectedParty));
-      if (party && party.products) {
-        const productInfo = party.products.find(p => p.productId === Number(productId));
-        if (productInfo) {
-          setTanch(productInfo.tanch || '0');
-          setWastage(productInfo.wastage || '0');
-        } else {
-          setTanch('0');
-          setWastage('0');
-        }
-      }
-    }
+
+    if (!selectedParty) return;
+
+    const party = parties.find((p) => p.partyId === Number(selectedParty));
+
+    const productInfo = party?.products?.find(
+      (p) => p.productId === Number(productId)
+    );
+
+    setTanch(productInfo?.tanch || '0');
+    setWastage(productInfo?.wastage || '0');
   };
-  
-  const uniqueParties = Array.isArray(parties) 
-    ? [...new Map(parties.map(item => [item["partyName"], item])).values()] 
+
+  const uniqueParties = Array.isArray(parties)
+    ? [...new Map(parties.map((item) => [item.partyName, item])).values()]
     : [];
 
   return (
-    <Dialog 
-      open={isOpen} 
-      onClose={onClose} 
-      maxWidth="sm" 
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="sm"
       fullWidth
-      sx={{
-        '& .MuiDialog-paper': {
-          m: { xs: 2, md: 'auto' },
-          width: { xs: 'calc(100% - 32px)', md: '100%' },
-          maxHeight: { xs: 'calc(100% - 32px)', md: '90vh' },
-        }
-      }}
     >
-      <DialogTitle sx={{ fontSize: '1.25rem', fontWeight: 600 }}>{isEditing ? 'Edit Entry' : 'Add New Entry'}</DialogTitle>
-      <DialogContent sx={{ pt: 2 }}>
+      <DialogTitle sx={{ fontWeight: 600 }}>
+        {isEditing ? 'Edit Entry' : 'Add New Entry'}
+      </DialogTitle>
+
+      <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel>Party</InputLabel>
-              <Select
-                value={selectedParty}
-                onChange={(e) => handlePartySelect(e.target.value)}
-                label="Party"
-              >
-                {uniqueParties.map(p => (
-                  <MenuItem key={p.partyId} value={p.partyId}>
-                    {p.partyName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              options={uniqueParties}
+              getOptionLabel={(option) => option.partyName}
+              value={uniqueParties.find(p => p.partyId === selectedParty) || null}
+              onChange={(event, newValue) => {
+                handlePartySelect(newValue ? newValue.partyId : '');
+              }}
+              renderInput={(params) => <TextField {...params} label="Party" />}
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  paddingRight: '90px !important',
+                },
+              }}
+            />
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth>
-              <InputLabel>Product</InputLabel>
-              <Select
-                value={selectedProduct}
-                onChange={(e) => handleProductSelect(e.target.value)}
-                label="Product"
-              >
-                {products.map(p => (
-                  <MenuItem key={p.productId} value={p.productId}>
-                    {p.productName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Autocomplete
+              options={products}
+              getOptionLabel={(option) => option.productName}
+              value={products.find(p => p.productId === selectedProduct) || null}
+              onChange={(event, newValue) => {
+                handleProductSelect(newValue ? newValue.productId : '');
+              }}
+              renderInput={(params) => <TextField {...params} label="Product" />}
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  paddingRight: '90px !important',
+                },
+              }}
+            />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
+              fullWidth
               label="Net Weight (grams)"
               type="number"
-              fullWidth
               value={netWeight}
               onChange={(e) => setNetWeight(e.target.value)}
             />
           </Grid>
+
           <Grid item xs={6}>
             <TextField
+              fullWidth
               label="Tanch"
               type="number"
-              fullWidth
               value={tanch}
               onChange={(e) => setTanch(e.target.value)}
             />
           </Grid>
+
           <Grid item xs={6}>
             <TextField
+              fullWidth
               label="Wastage"
               type="number"
-              fullWidth
               value={wastage}
               onChange={(e) => setWastage(e.target.value)}
             />
           </Grid>
+
           <Grid item xs={12}>
             <TextField
-              label="Calculated Value"
               fullWidth
-              value={calculatedValue ? calculatedValue.toFixed(2) : '0'}
+              label="Calculated Value"
+              value={calculatedValue.toFixed(2)}
+              InputProps={{
+                readOnly: true,
+              }}
             />
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions sx={{ 
-        position: { xs: 'sticky', md: 'static' },
-        bottom: { xs: 0, md: 'auto' },
-        bgcolor: 'white',
-        p: { xs: 2, md: 1 }
-      }}>
-        <Button 
-          onClick={onClose}
-          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
-        >
+
+      <DialogActions sx={{ p: 2 }}>
+        <Button onClick={onClose}>
           Cancel
         </Button>
-        <Button 
-          onClick={handleSave} 
+
+        <Button
           variant="contained"
-          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+          onClick={handleSave}
         >
           {isEditing ? 'Update' : 'Save'}
         </Button>
