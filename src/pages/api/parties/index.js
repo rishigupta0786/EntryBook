@@ -69,8 +69,60 @@ export default function handler(req, res) {
       console.error('Error in POST /api/parties:', error);
       res.status(500).json({ message: 'Error writing parties data.' });
     }
+  } else if (req.method === 'PUT') {
+    try {
+      const { partyId, partyName, products } = req.body;
+      
+      if (!partyId || !partyName) {
+        return res.status(400).json({ message: 'Missing required fields: partyId and partyName.' });
+      }
+
+      const parties = readParties();
+      const partyIndex = parties.findIndex(p => p.partyId === parseInt(partyId));
+      
+      if (partyIndex === -1) {
+        return res.status(404).json({ message: 'Party not found.' });
+      }
+
+      parties[partyIndex] = {
+        ...parties[partyIndex],
+        partyName,
+        products: products ? products.map(p => ({
+          productId: parseInt(p.productId),
+          tanch: parseFloat(p.tanch) || 0,
+          wastage: parseFloat(p.wastage) || 0,
+        })) : parties[partyIndex].products
+      };
+
+      writeParties(parties);
+      res.status(200).json(parties[partyIndex]);
+    } catch (error) {
+      console.error('Error in PUT /api/parties:', error);
+      res.status(500).json({ message: 'Error updating party.' });
+    }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { partyId } = req.query;
+      
+      if (!partyId) {
+        return res.status(400).json({ message: 'Missing partyId parameter.' });
+      }
+
+      const parties = readParties();
+      const updatedParties = parties.filter(p => p.partyId !== parseInt(partyId));
+      
+      if (updatedParties.length === parties.length) {
+        return res.status(404).json({ message: 'Party not found.' });
+      }
+
+      writeParties(updatedParties);
+      res.status(200).json({ message: 'Party deleted successfully.' });
+    } catch (error) {
+      console.error('Error in DELETE /api/parties:', error);
+      res.status(500).json({ message: 'Error deleting party.' });
+    }
   } else {
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

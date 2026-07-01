@@ -22,7 +22,6 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
         setTanch(entryData.tanch || '');
         setWastage(entryData.wastage || '');
       } else {
-        // Reset form for new entry
         setSelectedParty('');
         setSelectedProduct('');
         setNetWeight('');
@@ -84,9 +83,21 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
     : [];
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{isEditing ? 'Edit Entry' : 'Add New Entry'}</DialogTitle>
-      <DialogContent>
+    <Dialog 
+      open={isOpen} 
+      onClose={onClose} 
+      maxWidth="sm" 
+      fullWidth
+      sx={{
+        '& .MuiDialog-paper': {
+          m: { xs: 2, md: 'auto' },
+          width: { xs: 'calc(100% - 32px)', md: '100%' },
+          maxHeight: { xs: 'calc(100% - 32px)', md: '90vh' },
+        }
+      }}
+    >
+      <DialogTitle sx={{ fontSize: '1.25rem', fontWeight: 600 }}>{isEditing ? 'Edit Entry' : 'Add New Entry'}</DialogTitle>
+      <DialogContent sx={{ pt: 2 }}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid item xs={12}>
             <FormControl fullWidth>
@@ -156,9 +167,25 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} variant="contained">{isEditing ? 'Update' : 'Save'}</Button>
+      <DialogActions sx={{ 
+        position: { xs: 'sticky', md: 'static' },
+        bottom: { xs: 0, md: 'auto' },
+        bgcolor: 'white',
+        p: { xs: 2, md: 1 }
+      }}>
+        <Button 
+          onClick={onClose}
+          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          variant="contained"
+          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        >
+          {isEditing ? 'Update' : 'Save'}
+        </Button>
       </DialogActions>
     </Dialog>
   );

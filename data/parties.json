@@ -4,8 +4,30 @@
     "partyName": "rishigupta",
     "products": [
       {
-        "productId": 1,
+        "productId": 2,
         "tanch": 15,
+        "wastage": 15
+      }
+    ]
+  },
+  {
+    "partyId": 2,
+    "partyName": "KM jewellers",
+    "products": [
+      {
+        "productId": 2,
+        "tanch": 55,
+        "wastage": 5
+      }
+    ]
+  },
+  {
+    "partyId": 3,
+    "partyName": "new party ",
+    "products": [
+      {
+        "productId": 3,
+        "tanch": 10,
         "wastage": 15
       }
     ]

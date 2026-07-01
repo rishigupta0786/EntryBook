@@ -10,9 +10,21 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Add New Product</DialogTitle>
-      <DialogContent>
+    <Dialog 
+      open={isOpen} 
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      sx={{
+        '& .MuiDialog-paper': {
+          m: { xs: 2, md: 'auto' },
+          width: { xs: 'calc(100% - 32px)', md: '100%' },
+          maxHeight: { xs: 'calc(100% - 32px)', md: '90vh' },
+        }
+      }}
+    >
+      <DialogTitle sx={{ fontSize: '1.25rem', fontWeight: 600 }}>Add New Product</DialogTitle>
+      <DialogContent sx={{ pt: 2 }}>
         <TextField
           autoFocus
           margin="dense"
@@ -20,14 +32,31 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
           label="Product Name"
           type="text"
           fullWidth
-          variant="standard"
+          variant="outlined"
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
+          sx={{ mt: 1 }}
         />
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleAdd} variant="contained">Save</Button>
+      <DialogActions sx={{ 
+        position: { xs: 'sticky', md: 'static' },
+        bottom: { xs: 0, md: 'auto' },
+        bgcolor: 'white',
+        p: { xs: 2, md: 1 }
+      }}>
+        <Button 
+          onClick={onClose}
+          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleAdd} 
+          variant="contained"
+          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );

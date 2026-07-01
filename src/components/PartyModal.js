@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, 
@@ -6,11 +6,25 @@ import {
 } from '@mui/material';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-const PartyModal = ({ isOpen, onClose, onAddParty, products }) => {
+const PartyModal = ({ isOpen, onClose, onAddParty, onUpdateParty, products, editingParty }) => {
   const [partyName, setPartyName] = useState('');
   const [partyProducts, setPartyProducts] = useState([{ productId: '', tanch: '', wastage: '' }]);
 
-  const handleAdd = () => {
+  useEffect(() => {
+    if (editingParty) {
+      setPartyName(editingParty.partyName);
+      setPartyProducts(editingParty.products.map(p => ({
+        ...p,
+        tanch: p.tanch.toString(),
+        wastage: p.wastage.toString()
+      })));
+    } else {
+      setPartyName('');
+      setPartyProducts([{ productId: '', tanch: '', wastage: '' }]);
+    }
+  }, [editingParty]);
+
+  const handleSave = () => {
     const partyData = {
       partyName,
       products: partyProducts.map(p => ({
@@ -19,7 +33,14 @@ const PartyModal = ({ isOpen, onClose, onAddParty, products }) => {
         wastage: parseFloat(p.wastage) || 0,
       })),
     };
-    onAddParty(partyData);
+    
+    if (editingParty) {
+      onUpdateParty({ ...partyData, partyId: editingParty.partyId });
+    } else {
+      onAddParty(partyData);
+    }
+    
+    // Reset form
     setPartyName('');
     setPartyProducts([{ productId: '', tanch: '', wastage: '' }]);
   };
@@ -40,9 +61,21 @@ const PartyModal = ({ isOpen, onClose, onAddParty, products }) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Add New Party</DialogTitle>
-      <DialogContent>
+    <Dialog 
+      open={isOpen} 
+      onClose={onClose} 
+      maxWidth="md" 
+      fullWidth
+      sx={{
+        '& .MuiDialog-paper': {
+          m: { xs: 2, md: 'auto' },
+          width: { xs: 'calc(100% - 32px)', md: '100%' },
+          maxHeight: { xs: 'calc(100% - 32px)', md: '90vh' },
+        }
+      }}
+    >
+      <DialogTitle sx={{ fontSize: '1.25rem', fontWeight: 600 }}>{editingParty ? 'Edit Party' : 'Add New Party'}</DialogTitle>
+      <DialogContent sx={{ pt: 2 }}>
         <TextField
           autoFocus
           margin="dense"
@@ -50,10 +83,10 @@ const PartyModal = ({ isOpen, onClose, onAddParty, products }) => {
           label="Party Name"
           type="text"
           fullWidth
-          variant="standard"
+          variant="outlined"
           value={partyName}
           onChange={(e) => setPartyName(e.target.value)}
-          sx={{ mb: 3 }}
+          sx={{ mb: 3, mt: 1 }}
         />
         <TableContainer component={Paper}>
           <Table>
@@ -120,9 +153,25 @@ const PartyModal = ({ isOpen, onClose, onAddParty, products }) => {
           Add Product
         </Button>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleAdd} variant="contained">Save</Button>
+      <DialogActions sx={{ 
+        position: { xs: 'sticky', md: 'static' },
+        bottom: { xs: 0, md: 'auto' },
+        bgcolor: 'white',
+        p: { xs: 2, md: 1 }
+      }}>
+        <Button 
+          onClick={onClose}
+          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          variant="contained"
+          sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        >
+          {editingParty ? 'Update' : 'Save'}
+        </Button>
       </DialogActions>
     </Dialog>
   );

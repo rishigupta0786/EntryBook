@@ -1,1 +1,41 @@
-[]
+[
+  {
+    "entryDataId": 1,
+    "partyId": 1,
+    "partyName": "rishigupta",
+    "productId": 1,
+    "productName": "p1",
+    "tanch": 15,
+    "netWeight": 5000,
+    "wastage": 15,
+    "calculatedValue": 1500,
+    "createdOn": "2026-07-01T05:36:54.635Z",
+    "modifiedOn": "2026-07-01T05:36:54.635Z"
+  },
+  {
+    "entryDataId": 2,
+    "partyId": 2,
+    "partyName": "KM jewellers",
+    "productId": 1,
+    "productName": "p1",
+    "tanch": 45,
+    "netWeight": 4500,
+    "wastage": 10,
+    "calculatedValue": 2475,
+    "createdOn": "2026-07-01T05:38:40.540Z",
+    "modifiedOn": "2026-07-01T05:38:40.540Z"
+  },
+  {
+    "entryDataId": 3,
+    "partyId": 3,
+    "partyName": "new party ",
+    "productId": 3,
+    "productName": "p1",
+    "tanch": 10,
+    "netWeight": 5000,
+    "wastage": 15,
+    "calculatedValue": 1250,
+    "createdOn": "2026-07-01T10:28:43.673Z",
+    "modifiedOn": "2026-07-01T10:28:43.673Z"
+  }
+]

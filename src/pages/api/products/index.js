@@ -15,6 +15,20 @@ function readProducts() {
   }
 }
 
+const partiesFilePath = path.join(process.cwd(), 'data', 'parties.json');
+
+function readParties() {
+  try {
+    const data = fs.readFileSync(partiesFilePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+}
+
 function writeProducts(data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
@@ -73,8 +87,25 @@ export default function handler(req, res) {
       console.error('Caught error in POST /api/products:', error);
       res.status(500).json({ message: 'Error writing products data.' });
     }
+  } else if (req.method === 'DELETE') {
+    try {
+      const { productId } = req.query;
+      const parties = readParties();
+      const isProductInUse = parties.some(party => party.products.some(p => p.productId === parseInt(productId)));
+
+      if (isProductInUse) {
+        return res.status(400).json({ message: 'This product is assigned to a party and cannot be deleted.' });
+      }
+
+      const products = readProducts();
+      const updatedProducts = products.filter(p => p.productId !== parseInt(productId));
+      writeProducts(updatedProducts);
+      res.status(200).json({ message: 'Product deleted successfully.' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting product.' });
+    }
   } else {
-    res.setHeader('Allow', ['GET', 'POST']);
+    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
