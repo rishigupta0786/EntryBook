@@ -2,17 +2,5 @@
   {
     "productId": 1,
     "productName": "p1"
-  },
-  {
-    "productId": 2,
-    "productName": "p2"
-  },
-  {
-    "productId": 3,
-    "productName": "p3"
-  },
-  {
-    "productId": 4,
-    "productName": "p4"
   }
 ]

@@ -23,7 +23,7 @@ function writeEntries(data) {
 export default function handler(req, res) {
   const { id } = req.query;
   const entries = readEntries();
-  const entryIndex = entries.findIndex(e => e.id === parseInt(id));
+  const entryIndex = entries.findIndex(e => e.entryDataId === parseInt(id));
 
   if (entryIndex === -1) {
     return res.status(404).json({ message: 'Entry not found.' });
@@ -31,17 +31,20 @@ export default function handler(req, res) {
 
   if (req.method === 'GET') {
     res.status(200).json(entries[entryIndex]);
-  } else if (req.method === 'PUT') {
+  } else if (req.method === 'PATCH') {
+    console.log('Received PATCH request for entry:', id);
     try {
       const updatedEntry = {
         ...entries[entryIndex],
         ...req.body,
-        id: parseInt(id), // Ensure ID remains the same and is a number
+        entryDataId: parseInt(id), // Ensure ID remains the same and is a number
+        modifiedOn: new Date().toISOString(),
       };
       entries[entryIndex] = updatedEntry;
       writeEntries(entries);
       res.status(200).json(updatedEntry);
     } catch (error) {
+      console.error('Error in PATCH:', error);
       res.status(500).json({ message: 'Error updating entry.' });
     }
   } else if (req.method === 'DELETE') {
@@ -53,7 +56,7 @@ export default function handler(req, res) {
       res.status(500).json({ message: 'Error deleting entry.' });
     }
   } else {
-    res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+    res.setHeader('Allow', ['GET', 'PATCH', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

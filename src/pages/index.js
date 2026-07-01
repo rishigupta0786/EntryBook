@@ -42,19 +42,52 @@ const HomePage = () => {
   }, []);
 
   const handleAddProduct = async (productName) => {
-    // ... (existing code)
+    try {
+      console.log('Attempting to send POST request to /api/products...');
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productName }),
+      });
+
+
+      if (res.ok) {
+        await fetchData(); // Re-fetch data to show the new product
+        setIsProductModalOpen(false);
+      } else {
+        const errorData = await res.json();
+        alert(`Error saving product: ${errorData.message}`);
+      }
+    } catch (error) {
+      alert('A critical error occurred. Please check the browser console.');
+    }
   };
 
   const handleAddParty = async (partyData) => {
-    // ... (existing code)
+    try {
+      const res = await fetch('/api/parties', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(partyData),
+      });
+      if (res.ok) {
+        await fetchData(); // Re-fetch data
+        setIsPartyModalOpen(false);
+      } else {
+        const errorData = await res.json();
+        alert(`Error adding party: ${errorData.message}`);
+      }
+    } catch (error) {
+      alert('A critical error occurred while adding the party.');
+    }
   };
 
   const handleAddOrUpdateEntry = async (entry) => {
     if (editingEntry) {
       // Update existing entry
       try {
-        const res = await fetch(`/api/entries/${editingEntry.id}`, {
-          method: 'PUT',
+        const res = await fetch(`/api/entries/${editingEntry.entryDataId}`, {
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(entry),
         });
@@ -110,7 +143,14 @@ const HomePage = () => {
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
+    {
+      field: 'serialNo',
+      headerName: 'S.No.',
+      width:80,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+    },
     {
       field: 'partyName',
       headerName: 'Party Name',
@@ -144,7 +184,24 @@ const HomePage = () => {
       headerName: 'Calculated Value',
       type: 'number',
       width: 160,
-      valueFormatter: (params) => params.value.toFixed(2),
+    },
+    {
+      field: "createdOn",
+      headerName: "Created On",
+      type: "dateTime",
+      width: 180,
+      valueGetter: (value) => (value ? new Date(value) : null),
+      valueFormatter: (value) =>
+        value ? value.toLocaleString() : "",
+    },
+    {
+      field: "modifiedOn",
+      headerName: "Modified On",
+      type: "dateTime",
+      width: 180,
+      valueGetter: (value) => (value ? new Date(value) : null),
+      valueFormatter: (value) =>
+        value ? value.toLocaleString() : "",
     },
     {
       field: 'actions',
@@ -156,7 +213,7 @@ const HomePage = () => {
           <IconButton size="small" onClick={() => handleEditClick(params.row)}>
             <EditIcon />
           </IconButton>
-          <IconButton size="small" onClick={() => handleDeleteEntry(params.row.id)}>
+          <IconButton size="small" onClick={() => handleDeleteEntry(params.row.entryDataId)}>
             <DeleteIcon />
           </IconButton>
         </>
@@ -167,7 +224,8 @@ const HomePage = () => {
   const rows = entries.map(entry => ({
     ...entry,
     partyName: parties.find(p => p.partyId === entry.partyId)?.partyName || 'N/A',
-    productName: products.find(p => p.productId === entry.productId)?.productName || 'N/A',
+  productName: products.find(p => p.productId === entry.productId)?.productName || 'N/A',
+    ...entry,
   }));
 
   return (
@@ -209,8 +267,8 @@ const HomePage = () => {
           columns={columns}
           pageSize={10}
           rowsPerPageOptions={[10]}
-          checkboxSelection
           disableSelectionOnClick
+          getRowId={(row) => row.entryDataId}
         />
       </Box>
     </Container>

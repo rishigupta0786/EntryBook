@@ -4,8 +4,15 @@ import path from 'path';
 const filePath = path.join(process.cwd(), 'data', 'parties.json');
 
 function readParties() {
-  const data = fs.readFileSync(filePath);
-  return JSON.parse(data);
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return []; // If file doesn't exist, return empty array
+    }
+    throw error;
+  }
 }
 
 function writeParties(data) {

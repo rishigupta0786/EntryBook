@@ -1,53 +1,10 @@
 [
   {
     "partyId": 1,
-    "partyName": "rishi",
-    "products": [
-      {
-        "productId": 1,
-        "tanch": 80,
-        "wastage": 10
-      }
-    ]
-  },
-  {
-    "partyId": 2,
-    "partyName": "gupta",
-    "products": [
-      {
-        "productId": 1,
-        "tanch": 10,
-        "wastage": 10
-      }
-    ]
-  },
-  {
-    "partyId": 3,
     "partyName": "rishigupta",
     "products": [
       {
         "productId": 1,
-        "tanch": 10,
-        "wastage": 10
-      }
-    ]
-  },
-  {
-    "partyId": 4,
-    "partyName": "gupta gupta",
-    "products": [
-      {
-        "productId": 1,
-        "tanch": 15,
-        "wastage": 15
-      },
-      {
-        "productId": 2,
-        "tanch": 15,
-        "wastage": 15
-      },
-      {
-        "productId": 3,
         "tanch": 15,
         "wastage": 15
       }

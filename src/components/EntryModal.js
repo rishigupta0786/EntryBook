@@ -18,7 +18,7 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
       if (isEditing) {
         setSelectedParty(entryData.partyId || '');
         setSelectedProduct(entryData.productId || '');
-        setNetWeight(entryData.weight || '');
+        setNetWeight(entryData.netWeight || '');
         setTanch(entryData.tanch || '');
         setWastage(entryData.wastage || '');
       } else {
@@ -152,9 +152,6 @@ const EntryModal = ({ isOpen, onClose, onAddEntry, parties, products, entryData 
               label="Calculated Value"
               fullWidth
               value={calculatedValue ? calculatedValue.toFixed(2) : '0'}
-              InputProps={{
-                readOnly: true,
-              }}
             />
           </Grid>
         </Grid>

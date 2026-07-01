@@ -6,8 +6,15 @@ const productsFilePath = path.join(process.cwd(), 'data', 'products.json');
 const partiesFilePath = path.join(process.cwd(), 'data', 'parties.json');
 
 function readData(filePath) {
-  const data = fs.readFileSync(filePath);
-  return JSON.parse(data);
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return []; // If file doesn't exist, return empty array
+    }
+    throw error;
+  }
 }
 
 function writeData(filePath, data) {
@@ -52,9 +59,11 @@ export default function handler(req, res) {
         productId: parseInt(productId),
         productName: product.productName,
         tanch: parseFloat(tanch),
-        weight: parseFloat(netWeight),
+        netWeight: parseFloat(netWeight),
         wastage: parseFloat(wastage),
         calculatedValue,
+        createdOn: new Date().toISOString(),
+        modifiedOn: new Date().toISOString(),
       };
 
       entries.push(newEntry);
