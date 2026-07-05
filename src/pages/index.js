@@ -1,17 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import {
+  AppBar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Drawer,
+  Grid,
+  IconButton,
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Dashboard as DashboardIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Group as GroupIcon,
+  Inventory2 as Inventory2Icon,
+  Menu as MenuIcon,
+  Notifications as NotificationsIcon,
+  Search as SearchIcon,
+} from '@mui/icons-material';
+import { DataGrid } from '@mui/x-data-grid';
 import ProductModal from '../components/ProductModal';
 import PartyModal from '../components/PartyModal';
 import EntryModal from '../components/EntryModal';
-import { Container, Typography, Button, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogTitle, DialogContent, DialogActions, Menu, MenuItem, TextField } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
+const drawerWidth = 240;
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [parties, setParties] = useState([]);
   const [entries, setEntries] = useState([]);
-
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isPartyModalOpen, setIsPartyModalOpen] = useState(false);
   const [isEntryModalOpen, setIsEntryModalOpen] = useState(false);
@@ -23,6 +65,11 @@ const HomePage = () => {
   const [menu, setMenu] = useState({ anchorEl: null, items: [] });
   const [productSearch, setProductSearch] = useState('');
   const [partySearch, setPartySearch] = useState('');
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   const handleMenuClick = (event, items) => {
     setMenu({ anchorEl: event.currentTarget, items });
@@ -48,14 +95,18 @@ const HomePage = () => {
       setParties(partiesData);
       setEntries(entriesData);
     } catch (error) {
-      console.error("Failed to fetch initial data:", error);
+      console.error('Failed to fetch initial data:', error);
     }
   };
 
   const handleDeleteProduct = async (productId) => {
-    const isProductInUse = parties.some(party => party.products.some(p => p.productId === productId));
+    const isProductInUse = parties.some((party) =>
+      party.products.some((p) => p.productId === productId)
+    );
     if (isProductInUse) {
-      alert('This product is assigned to a party and cannot be deleted. Please remove it from the party first.');
+      alert(
+        'This product is assigned to a party and cannot be deleted. Please remove it from the party first.'
+      );
       return;
     }
 
@@ -87,7 +138,6 @@ const HomePage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productName }),
       });
-
 
       if (res.ok) {
         await fetchData(); // Re-fetch data to show the new product
@@ -135,7 +185,7 @@ const HomePage = () => {
           setEditingEntry(null);
         }
       } catch (error) {
-        console.error("Failed to update entry:", error);
+        console.error('Failed to update entry:', error);
       }
     } else {
       // Add new entry
@@ -150,7 +200,7 @@ const HomePage = () => {
           setIsEntryModalOpen(false);
         }
       } catch (error) {
-        console.error("Failed to add entry:", error);
+        console.error('Failed to add entry:', error);
       }
     }
   };
@@ -170,7 +220,7 @@ const HomePage = () => {
           await fetchData(); // Re-fetch data
         }
       } catch (error) {
-        console.error("Failed to delete entry:", error);
+        console.error('Failed to delete entry:', error);
       }
     }
   };
@@ -208,7 +258,7 @@ const HomePage = () => {
           alert(`Error deleting party: ${errorData.message}`);
         }
       } catch (error) {
-        console.error("Failed to delete party:", error);
+        console.error('Failed to delete party:', error);
       }
     }
   };
@@ -232,10 +282,11 @@ const HomePage = () => {
     {
       field: 'serialNo',
       headerName: 'S.No.',
-      width:80,
+      width: 80,
       sortable: false,
       filterable: false,
-      renderCell: (params) => params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+      renderCell: (params) =>
+        params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
     },
     {
       field: 'partyName',
@@ -272,22 +323,20 @@ const HomePage = () => {
       width: 160,
     },
     {
-      field: "createdOn",
-      headerName: "Created On",
-      type: "dateTime",
+      field: 'createdOn',
+      headerName: 'Created On',
+      type: 'dateTime',
       width: 180,
       valueGetter: (value) => (value ? new Date(value) : null),
-      valueFormatter: (value) =>
-        value ? value.toLocaleString() : "",
+      valueFormatter: (value) => (value ? value.toLocaleString() : ''),
     },
     {
-      field: "modifiedOn",
-      headerName: "Modified On",
-      type: "dateTime",
+      field: 'modifiedOn',
+      headerName: 'Modified On',
+      type: 'dateTime',
       width: 180,
       valueGetter: (value) => (value ? new Date(value) : null),
-      valueFormatter: (value) =>
-        value ? value.toLocaleString() : "",
+      valueFormatter: (value) => (value ? value.toLocaleString() : ''),
     },
     {
       field: 'actions',
@@ -299,7 +348,10 @@ const HomePage = () => {
           <IconButton size="small" onClick={() => handleEditClick(params.row)}>
             <EditIcon />
           </IconButton>
-          <IconButton size="small" onClick={() => handleDeleteEntry(params.row.entryDataId)}>
+          <IconButton
+            size="small"
+            onClick={() => handleDeleteEntry(params.row.entryDataId)}
+          >
             <DeleteIcon />
           </IconButton>
         </>
@@ -307,144 +359,348 @@ const HomePage = () => {
     },
   ];
 
-  const rows = entries.map(entry => ({
+  const rows = entries.map((entry) => ({
     ...entry,
-    partyName: parties.find(p => p.partyId === entry.partyId)?.partyName || 'N/A',
-    productName: products.find(p => p.productId === entry.productId)?.productName || 'N/A',
+    partyName:
+      parties.find((p) => p.partyId === entry.partyId)?.partyName || 'N/A',
+    productName:
+      products.find((p) => p.productId === entry.productId)?.productName ||
+      'N/A',
   }));
 
-  const partyMenuItems = [
-    { label: 'Add Party', action: () => setIsPartyModalOpen(true) },
-    { label: 'Edit / View Parties', action: () => setIsViewPartiesOpen(true) },
-  ];
-
-  const productMenuItems = [
-    { label: 'Add Product', action: () => setIsProductModalOpen(true) },
-    { label: 'View Products', action: () => setIsViewProductsOpen(true) },
-  ];
-
-  return (
-    <Box sx={{
-      minHeight: '100vh',
-      bgcolor: 'background.default',
-      p: { xs: 2, md: 4 },
-      color: 'text.primary',
-    }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h3" component="h1" sx={{ fontWeight: 700, m: 0 }}>
+  const drawer = (
+    <div>
+      <Toolbar>
+        <Typography variant="h6" noWrap component="div">
           EntryBook
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-          <Button 
-            variant="contained" 
-            onClick={() => { setEditingEntry(null); setIsEntryModalOpen(true); }}
-            sx={{ 
-              minWidth: { xs: '100%', sm: 'auto' },
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 20px rgba(144, 202, 249, 0.4)',
-              },
-            }}
+      </Toolbar>
+      <List>
+        {[
+          { text: 'Dashboard', icon: <DashboardIcon /> },
+          { text: 'Parties', icon: <GroupIcon /> },
+          { text: 'Products', icon: <Inventory2Icon /> },
+        ].map((item, index) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton onClick={() => {
+                if (item.text === 'Parties') {
+                  setIsViewPartiesOpen(true);
+                } else if (item.text === 'Products') {
+                  setIsViewProductsOpen(true);
+                }
+              }}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </div>
+  );
+
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          backgroundColor: 'white',
+          color: 'black',
+          boxShadow: 'none',
+          borderBottom: '1px solid #e0e0e0',
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
           >
-            Add Entry
-          </Button>
-          <Button 
-            variant="outlined" 
-            onClick={(e) => handleMenuClick(e, partyMenuItems)}
-            sx={{ 
-              minWidth: { xs: '100%', sm: 'auto' },
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 20px rgba(144, 202, 249, 0.4)',
-              },
-            }}
-          >
-            Parties
-          </Button>
-          <Button 
-            variant="outlined" 
-            onClick={(e) => handleMenuClick(e, productMenuItems)}
-            sx={{ 
-              minWidth: { xs: '100%', sm: 'auto' },
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 20px rgba(144, 202, 249, 0.4)',
-              },
-            }}
-          >
-            Products
-          </Button>
-          <Menu
-            anchorEl={menu.anchorEl}
-            open={Boolean(menu.anchorEl)}
-            onClose={handleMenuClose}
-          >
-            {menu.items.map((item, index) => (
-              <MenuItem key={index} onClick={() => { item.action(); handleMenuClose(); }}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Box>
+            <MenuIcon />
+          </IconButton>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" noWrap component="div">
+              Dashboard
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Welcome back, Rishi 👋
+            </Typography>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="nav"
+        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="mailbox folders"
+      >
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
       </Box>
-      
-      <ProductModal
-        isOpen={isProductModalOpen}
-        onClose={() => setIsProductModalOpen(false)}
-        onAddProduct={handleAddProduct}
-      />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          backgroundColor: '#f5f5f5',
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="lg">
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    Total Entries
+                  </Typography>
+                  <Typography variant="h5">{entries.length}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    Total Parties
+                  </Typography>
+                  <Typography variant="h5">{parties.length}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    Total Products
+                  </Typography>
+                  <Typography variant="h5">{products.length}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom>
+                    Total Value
+                  </Typography>
+                  <Typography variant="h5">
+                    {entries
+                      .reduce((acc, entry) => acc + entry.calculatedValue, 0)
+                      .toFixed(2)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3} sx={{ mt: 3 }}>
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 4,
+                }}
+              >
+                <Box>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() => {
+                      setEditingEntry(null);
+                      setIsEntryModalOpen(true);
+                      setIsPartyModalOpen(false);
+                      setIsProductModalOpen(false);
+                    }}
+                  >
+                    Add Entry
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setIsPartyModalOpen(true);
+                      setIsEntryModalOpen(false);
+                      setIsProductModalOpen(false);
+                    }}
+                    sx={{ ml: 2 }}
+                  >
+                    Add Party
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setIsProductModalOpen(true);
+                      setIsEntryModalOpen(false);
+                      setIsPartyModalOpen(false);
+                    }}
+                    sx={{ ml: 2 }}
+                  >
+                    Add Product
+                  </Button>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                <Typography variant="h6" gutterBottom>
+                  Recent Entries
+                </Typography>
+                <Box sx={{ height: 600, width: '100%' }}>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    getRowId={(row) => row.entryDataId}
+                    disableRowSelectionOnClick
+                  />
+                </Box>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
 
-      <PartyModal
-        isOpen={isPartyModalOpen}
-        onClose={closePartyModal}
-        onAddParty={handleAddParty}
-        onUpdateParty={handleUpdateParty}
-        products={products}
-        editingParty={editingParty}
-      />
-
-      <EntryModal
-        isOpen={isEntryModalOpen}
-        onClose={closeModal}
-        onAddEntry={handleAddOrUpdateEntry}
-        parties={parties}
-        products={products}
-        entryData={editingEntry}
-      />
-
-      {/* Entries DataGrid */}
-      <Box sx={{ height: { xs: 500, md: 600 }, width: '100%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          getRowId={(row) => row.entryDataId}
-          disableRowSelectionOnClick
-          showToolbar
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              csvOptions: {
-                fileName: "entries",
-              },
+        {/* Right-side sliding drawer */}
+        <Drawer
+          anchor="right"
+          open={isEntryModalOpen || isPartyModalOpen || isProductModalOpen}
+          onClose={() => {
+            setIsEntryModalOpen(false);
+            setIsPartyModalOpen(false);
+            setIsProductModalOpen(false);
+            setEditingEntry(null);
+            setEditingParty(null);
+          }}
+          PaperProps={{
+            sx: {
+              width: { xs: '100%', sm: 500, md: 600 },
+              maxWidth: '90vw',
             },
           }}
           sx={{
-            borderRadius: 2,
-            boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-            
-            "& .MuiDataGrid-toolbarContainer": {
-              color: 'text.primary',
+            width: 400,
+            flexShrink: 0,
+            [`& .MuiDrawer-paper`]: {
+              width: 400,
+              boxSizing: 'border-box',
             },
-            "& .MuiDataGrid-columnHeader": {
-              color: 'text.primary',
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            '& .MuiBackdrop-root': {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
             },
           }}
-        />
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <Box
+              sx={{
+                p: 2,
+                borderBottom: '1px solid #e0e0e0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                position: 'sticky',
+                top: 0,
+                bgcolor: 'white',
+                zIndex: 1,
+              }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {isEntryModalOpen
+                  ? editingEntry
+                    ? 'Edit Entry'
+                    : 'Add New Entry'
+                  : isPartyModalOpen
+                  ? editingParty
+                    ? 'Edit Party'
+                    : 'Add New Party'
+                  : 'Add New Product'}
+              </Typography>
+              <IconButton
+                onClick={() => {
+                  setIsEntryModalOpen(false);
+                  setIsPartyModalOpen(false);
+                  setIsProductModalOpen(false);
+                  setEditingEntry(null);
+                  setEditingParty(null);
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+            <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
+              {isEntryModalOpen && (
+                <EntryModal
+                  isOpen={isEntryModalOpen}
+                  onClose={() => {
+                    setIsEntryModalOpen(false);
+                    setEditingEntry(null);
+                  }}
+                  onAddEntry={handleAddOrUpdateEntry}
+                  parties={parties}
+                  products={products}
+                  entryData={editingEntry}
+                />
+              )}
+              {isPartyModalOpen && (
+                <PartyModal
+                  isOpen={isPartyModalOpen}
+                  onClose={() => {
+                    setIsPartyModalOpen(false);
+                    setEditingParty(null);
+                  }}
+                  onAddParty={handleAddParty}
+                  onUpdateParty={handleUpdateParty}
+                  products={products}
+                  editingParty={editingParty}
+                />
+              )}
+              {isProductModalOpen && (
+                <ProductModal
+                  isOpen={isProductModalOpen}
+                  onClose={() => setIsProductModalOpen(false)}
+                  onAddProduct={handleAddProduct}
+                />
+              )}
+            </Box>
+          </Box>
+        </Drawer>
       </Box>
-      <Dialog open={isViewProductsOpen} onClose={() => setIsViewProductsOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={isViewProductsOpen}
+        onClose={() => setIsViewProductsOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>All Products</DialogTitle>
         <DialogContent>
           <TextField
@@ -468,14 +724,19 @@ const HomePage = () => {
               <TableBody>
                 {products
                   .filter((product) =>
-                    product.productName.toLowerCase().includes(productSearch.toLowerCase())
+                    product.productName
+                      .toLowerCase()
+                      .includes(productSearch.toLowerCase())
                   )
                   .map((product) => (
                     <TableRow key={product.productId}>
                       <TableCell>{product.productId}</TableCell>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>
-                        <IconButton onClick={() => handleDeleteProduct(product.productId)} size="small">
+                        <IconButton
+                          onClick={() => handleDeleteProduct(product.productId)}
+                          size="small"
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </TableCell>
@@ -489,24 +750,17 @@ const HomePage = () => {
           <Button onClick={() => setIsViewProductsOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
-
-
-      {/* View Parties Modal - Responsive Design */}
-      <Dialog 
-        open={isViewPartiesOpen} 
-        onClose={() => { setIsViewPartiesOpen(false); setSelectedParty(null); }} 
-        maxWidth="md" 
-        fullWidth
-        sx={{
-          '& .MuiDialog-paper': {
-            m: { xs: 2, md: 'auto' }, // Margin on mobile, centered on desktop
-            width: { xs: 'calc(100% - 32px)', md: '100%' },
-            maxHeight: { xs: 'calc(100% - 32px)', md: '90vh' },
-          }
+      <Dialog
+        open={isViewPartiesOpen}
+        onClose={() => {
+          setIsViewPartiesOpen(false);
+          setSelectedParty(null);
         }}
+        maxWidth="md"
+        fullWidth
       >
-        <DialogTitle sx={{ fontSize: '1.25rem', fontWeight: 600 }}>All Parties</DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
+        <DialogTitle>All Parties</DialogTitle>
+        <DialogContent>
           <TextField
             autoFocus
             margin="dense"
@@ -516,72 +770,82 @@ const HomePage = () => {
             variant="standard"
             onChange={(e) => setPartySearch(e.target.value)}
           />
-            <TableContainer component={Paper} sx={{ mt: 2 }}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Party ID</strong></TableCell>
-                    <TableCell><strong>Party Name</strong></TableCell>
-                    <TableCell><strong>Assigned Products</strong></TableCell>
-                    <TableCell align="right"><strong>Actions</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {parties
-                    .filter((party) =>
-                      party.partyName.toLowerCase().includes(partySearch.toLowerCase())
-                    )
-                    .map((party) => (
-                      <TableRow key={party.partyId} hover sx={{ cursor: 'pointer' }}>
-                        <TableCell>{party.partyId}</TableCell>
-                        <TableCell>{party.partyName}</TableCell>
-                        <TableCell>
-                          {party.products.map(p => products.find(product => product.productId === p.productId)?.productName).join(', ')}
-                        </TableCell>
-                        <TableCell align="right" sx={{ 
-                          display: 'flex', 
+          <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <strong>Party ID</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Party Name</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Assigned Products</strong>
+                  </TableCell>
+                  <TableCell align="right">
+                    <strong>Actions</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {parties
+                  .filter((party) =>
+                    party.partyName
+                      .toLowerCase()
+                      .includes(partySearch.toLowerCase())
+                  )
+                  .map((party) => (
+                    <TableRow key={party.partyId} hover sx={{ cursor: 'pointer' }}>
+                      <TableCell>{party.partyId}</TableCell>
+                      <TableCell>{party.partyName}</TableCell>
+                      <TableCell>
+                        {party.products
+                          .map(
+                            (p) =>
+                              products.find(
+                                (product) => product.productId === p.productId
+                              )?.productName
+                          )
+                          .join(', ')}
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        sx={{
+                          display: 'flex',
                           flexDirection: { xs: 'column', md: 'row' },
                           gap: 1,
-                          justifyContent: 'flex-end'
-                        }}>
-                          <Button 
-                            size="small" 
-                            variant="outlined" 
-                            onClick={() => handleEditPartyClick(party)}
-                            sx={{ minHeight: 36 }}
-                          >
-                            Edit
-                          </Button>
-                          <Button 
-                            size="small" 
-                            variant="outlined" 
-                            color="error" 
-                            onClick={() => handleDeleteParty(party.partyId)}
-                            sx={{ minHeight: 36 }}
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  {parties.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={3} align="center">No parties found. Add your first party!</TableCell>
+                          justifyContent: 'flex-end',
+                        }}
+                      >
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => handleEditPartyClick(party)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          onClick={() => handleDeleteParty(party.partyId)}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </DialogContent>
-        <DialogActions sx={{ 
-          position: { xs: 'sticky', md: 'static' },
-          bottom: { xs: 0, md: 'auto' },
-          bgcolor: 'white',
-          p: { xs: 2, md: 1 }
-        }}>
-          <Button 
-            onClick={() => { setIsViewPartiesOpen(false); setSelectedParty(null); }}
-            sx={{ minHeight: 44, minWidth: { xs: '100%', md: 'auto' } }}
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setIsViewPartiesOpen(false);
+              setSelectedParty(null);
+            }}
           >
             Close
           </Button>

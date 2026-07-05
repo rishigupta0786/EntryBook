@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Box,
   Button,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Grid,
   Autocomplete,
+  Typography,
 } from '@mui/material';
 
 const EntryModal = ({
@@ -98,110 +92,90 @@ const EntryModal = ({
     ? [...new Map(parties.map((item) => [item.partyName, item])).values()]
     : [];
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
-    <Dialog
-      open={isOpen}
-      onClose={onClose}
-      maxWidth="sm"
-      fullWidth
-    >
-      <DialogTitle sx={{ fontWeight: 600 }}>
-        {isEditing ? 'Edit Entry' : 'Add New Entry'}
-      </DialogTitle>
-
-      <DialogContent>
-        <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12}>
-            <Autocomplete
-              options={uniqueParties}
-              getOptionLabel={(option) => option.partyName}
-              value={uniqueParties.find(p => p.partyId === selectedParty) || null}
-              onChange={(event, newValue) => {
-                handlePartySelect(newValue ? newValue.partyId : '');
-              }}
-              renderInput={(params) => <TextField {...params} label="Party" />}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  paddingRight: '90px !important',
-                },
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Autocomplete
-              options={products}
-              getOptionLabel={(option) => option.productName}
-              value={products.find(p => p.productId === selectedProduct) || null}
-              onChange={(event, newValue) => {
-                handleProductSelect(newValue ? newValue.productId : '');
-              }}
-              renderInput={(params) => <TextField {...params} label="Product" />}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  paddingRight: '90px !important',
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Net Weight (grams)"
-              type="number"
-              value={netWeight}
-              onChange={(e) => setNetWeight(e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Tanch"
-              type="number"
-              value={tanch}
-              onChange={(e) => setTanch(e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              fullWidth
-              label="Wastage"
-              type="number"
-              value={wastage}
-              onChange={(e) => setWastage(e.target.value)}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Calculated Value"
-              value={calculatedValue.toFixed(2)}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-          </Grid>
+    <Box sx={{ p: 2 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Autocomplete
+            options={uniqueParties}
+            getOptionLabel={(option) => option.partyName}
+            value={uniqueParties.find((p) => p.partyId === selectedParty) || null}
+            onChange={(event, newValue) => {
+              handlePartySelect(newValue ? newValue.partyId : '');
+            }}
+            renderInput={(params) => <TextField {...params} label="Party" />}
+            fullWidth
+          />
         </Grid>
-      </DialogContent>
+        <Grid item xs={12}>
+          <Autocomplete
+            options={products}
+            getOptionLabel={(option) => option.productName}
+            value={products.find((p) => p.productId === selectedProduct) || null}
+            onChange={(event, newValue) => {
+              handleProductSelect(newValue ? newValue.productId : '');
+            }}
+            renderInput={(params) => <TextField {...params} label="Product" />}
+            fullWidth
+          />
+        </Grid>
 
-      <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose}>
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Net Weight (grams)"
+            type="number"
+            value={netWeight}
+            onChange={(e) => setNetWeight(e.target.value)}
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            label="Tanch"
+            type="number"
+            value={tanch}
+            onChange={(e) => setTanch(e.target.value)}
+          />
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            label="Wastage"
+            type="number"
+            value={wastage}
+            onChange={(e) => setWastage(e.target.value)}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
+          <TextField
+            fullWidth
+            label="Calculated Value"
+            value={calculatedValue.toFixed(2)}
+            InputProps={{
+              readOnly: true,
+            }}
+          />
+        </Grid>
+      </Grid>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Button onClick={onClose} sx={{ mr: 1 }}>
           Cancel
         </Button>
 
-        <Button
-          variant="contained"
-          onClick={handleSave}
-        >
+        <Button variant="contained" onClick={handleSave}>
           {isEditing ? 'Update' : 'Save'}
         </Button>
-      </DialogActions>
-    </Dialog>
+      </Box>
+    </Box>
   );
 };
 

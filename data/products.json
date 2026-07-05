@@ -1,10 +1,82 @@
 [
   {
+    "productId": 1,
+    "productName": "Gold Ring"
+  },
+  {
     "productId": 2,
-    "productName": "chain"
+    "productName": "Gold Chain"
   },
   {
     "productId": 3,
-    "productName": "p1"
+    "productName": "Gold Pendant"
+  },
+  {
+    "productId": 4,
+    "productName": "Gold Bracelet"
+  },
+  {
+    "productId": 5,
+    "productName": "Gold Bangle"
+  },
+  {
+    "productId": 6,
+    "productName": "Gold Necklace"
+  },
+  {
+    "productId": 7,
+    "productName": "Gold Earrings"
+  },
+  {
+    "productId": 8,
+    "productName": "Gold Anklet"
+  },
+  {
+    "productId": 9,
+    "productName": "Gold Mangalsutra"
+  },
+  {
+    "productId": 10,
+    "productName": "Gold Coin"
+  },
+  {
+    "productId": 11,
+    "productName": "Gold Kada"
+  },
+  {
+    "productId": 12,
+    "productName": "Gold Nose Pin"
+  },
+  {
+    "productId": 13,
+    "productName": "Gold Brooch"
+  },
+  {
+    "productId": 14,
+    "productName": "Gold Locket"
+  },
+  {
+    "productId": 15,
+    "productName": "Gold Charm"
+  },
+  {
+    "productId": 16,
+    "productName": "Gold Toe Ring"
+  },
+  {
+    "productId": 17,
+    "productName": "Gold Cufflinks"
+  },
+  {
+    "productId": 18,
+    "productName": "Gold Hair Pin"
+  },
+  {
+    "productId": 19,
+    "productName": "Gold Waist Chain"
+  },
+  {
+    "productId": 20,
+    "productName": "Gold Idol"
   }
 ]
