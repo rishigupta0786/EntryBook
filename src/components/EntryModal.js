@@ -97,86 +97,101 @@ const EntryModal = ({
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Autocomplete
-            options={uniqueParties}
-            getOptionLabel={(option) => option.partyName}
-            value={uniqueParties.find((p) => p.partyId === selectedParty) || null}
-            onChange={(event, newValue) => {
-              handlePartySelect(newValue ? newValue.partyId : '');
-            }}
-            renderInput={(params) => <TextField {...params} label="Party" />}
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Autocomplete
-            options={products}
-            getOptionLabel={(option) => option.productName}
-            value={products.find((p) => p.productId === selectedProduct) || null}
-            onChange={(event, newValue) => {
-              handleProductSelect(newValue ? newValue.productId : '');
-            }}
-            renderInput={(params) => <TextField {...params} label="Product" />}
-            fullWidth
-          />
-        </Grid>
+  <Box
+    sx={{
+      p: 2,
+      display: "flex",
+      flexDirection: "column",
+      gap: 2,
+    }}
+  >
+    {/* Party */}
+    <Autocomplete
+      options={uniqueParties}
+      getOptionLabel={(option) => option.partyName}
+      value={uniqueParties.find((p) => p.partyId === selectedParty) || null}
+      onChange={(event, newValue) => {
+        handlePartySelect(newValue ? newValue.partyId : "");
+      }}
+      renderInput={(params) => (
+        <TextField {...params} label="Party" fullWidth />
+      )}
+    />
 
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Net Weight (grams)"
-            type="number"
-            value={netWeight}
-            onChange={(e) => setNetWeight(e.target.value)}
-          />
-        </Grid>
+    {/* Product */}
+    <Autocomplete
+      options={products}
+      getOptionLabel={(option) => option.productName}
+      value={products.find((p) => p.productId === selectedProduct) || null}
+      onChange={(event, newValue) => {
+        handleProductSelect(newValue ? newValue.productId : "");
+      }}
+      renderInput={(params) => (
+        <TextField {...params} label="Product" fullWidth />
+      )}
+    />
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="Tanch"
-            type="number"
-            value={tanch}
-            onChange={(e) => setTanch(e.target.value)}
-          />
-        </Grid>
+    {/* Net Weight */}
+    <TextField
+      fullWidth
+      label="Net Weight (grams)"
+      type="number"
+      value={netWeight}
+      onChange={(e) => setNetWeight(e.target.value)}
+    />
 
-        <Grid item xs={6}>
-          <TextField
-            fullWidth
-            label="Wastage"
-            type="number"
-            value={wastage}
-            onChange={(e) => setWastage(e.target.value)}
-          />
-        </Grid>
+    {/* Tanch + Wastage */}
+    <Box
+      sx={{
+        display: "flex",
+        gap: 2,
+      }}
+    >
+      <TextField
+        fullWidth
+        label="Tanch"
+        type="number"
+        value={tanch}
+        onChange={(e) => setTanch(e.target.value)}
+      />
 
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Calculated Value"
-            value={calculatedValue.toFixed(2)}
-            InputProps={{
-              readOnly: true,
-            }}
-          />
-        </Grid>
-      </Grid>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        <Button onClick={onClose} sx={{ mr: 1 }}>
-          Cancel
-        </Button>
-
-        <Button variant="contained" onClick={handleSave}>
-          {isEditing ? 'Update' : 'Save'}
-        </Button>
-      </Box>
+      <TextField
+        fullWidth
+        label="Wastage"
+        type="number"
+        value={wastage}
+        onChange={(e) => setWastage(e.target.value)}
+      />
     </Box>
-  );
+
+    {/* Calculated Value */}
+    <TextField
+      fullWidth
+      label="Calculated Value"
+      value={calculatedValue.toFixed(2)}
+      InputProps={{
+        readOnly: true,
+      }}
+    />
+
+    {/* Bottom Buttons */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "flex-end",
+        gap: 1,
+        mt: 2,
+        pt: 2,
+      }}
+    >
+      <Button onClick={onClose}>Cancel</Button>
+
+      <Button variant="contained" onClick={handleSave}>
+        {isEditing ? "Update" : "Save"}
+      </Button>
+    </Box>
+  </Box>
+);
 };
 
 export default EntryModal;

@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 
 const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
   const [productName, setProductName] = useState('');
@@ -9,36 +18,30 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
     setProductName('');
   };
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-        Add New Product
-      </Typography>
-      <TextField
-        autoFocus
-        margin="dense"
-        id="productName"
-        label="Product Name"
-        type="text"
-        fullWidth
-        variant="outlined"
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-        sx={{ mt: 1 }}
-      />
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        <Button onClick={onClose} sx={{ mr: 1 }}>
-          Cancel
-        </Button>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Add New Product</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="productName"
+          label="Product Name"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+          sx={{ mt: 1 }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
         <Button variant="contained" onClick={handleAdd}>
           Save
         </Button>
-      </Box>
-    </Box>
+      </DialogActions>
+    </Dialog>
   );
 };
 

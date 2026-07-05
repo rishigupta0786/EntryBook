@@ -1,53 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import {
-  AppBar,
   Box,
-  Button,
-  Card,
-  CardContent,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Drawer,
-  Grid,
-  IconButton,
-  InputAdornment,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
   Toolbar,
+  Grid,
+  Drawer,
   Typography,
+  IconButton,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Dashboard as DashboardIcon,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-  Group as GroupIcon,
-  Inventory2 as Inventory2Icon,
-  Menu as MenuIcon,
-  Notifications as NotificationsIcon,
-  Search as SearchIcon,
-} from '@mui/icons-material';
-import { DataGrid } from '@mui/x-data-grid';
-import ProductModal from '../components/ProductModal';
-import PartyModal from '../components/PartyModal';
-import EntryModal from '../components/EntryModal';
 import CloseIcon from '@mui/icons-material/Close';
+import ProductModal from '../components/ProductModal';
+import DashboardStats from '../components/dashboard/DashboardStats';
+import AddActionButtons from '../components/dashboard/AddActionButtons';
+import RecentEntriesTable from '../components/dashboard/RecentEntriesTable';
+import SideNavigation from '../components/layout/SideNavigation';
+import Header from '../components/layout/Header';
+import ViewProductsModal from '../components/modals/ViewProductsModal';
+import ViewPartiesModal from '../components/modals/ViewPartiesModal';
+import EntryPartyDrawer from '../components/modals/EntryPartyDrawer';
+import EntryModal from '../components/EntryModal';
 const drawerWidth = 240;
 
 const HomePage = () => {
@@ -278,195 +249,25 @@ const HomePage = () => {
     setEditingEntry(null);
   };
 
-  const columns = [
-    {
-      field: 'serialNo',
-      headerName: 'S.No.',
-      width: 80,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) =>
-        params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
-    },
-    {
-      field: 'partyName',
-      headerName: 'Party Name',
-      width: 150,
-    },
-    {
-      field: 'productName',
-      headerName: 'Product Name',
-      width: 150,
-    },
-    {
-      field: 'netWeight',
-      headerName: 'Net Weight (g)',
-      type: 'number',
-      width: 150,
-    },
-    {
-      field: 'tanch',
-      headerName: 'Tanch',
-      type: 'number',
-      width: 150,
-    },
-    {
-      field: 'wastage',
-      headerName: 'Wastage',
-      type: 'number',
-      width: 150,
-    },
-    {
-      field: 'calculatedValue',
-      headerName: 'Calculated Value',
-      type: 'number',
-      width: 160,
-    },
-    {
-      field: 'createdOn',
-      headerName: 'Created On',
-      type: 'dateTime',
-      width: 180,
-      valueGetter: (value) => (value ? new Date(value) : null),
-      valueFormatter: (value) => (value ? value.toLocaleString() : ''),
-    },
-    {
-      field: 'modifiedOn',
-      headerName: 'Modified On',
-      type: 'dateTime',
-      width: 180,
-      valueGetter: (value) => (value ? new Date(value) : null),
-      valueFormatter: (value) => (value ? value.toLocaleString() : ''),
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      sortable: false,
-      width: 120,
-      renderCell: (params) => (
-        <>
-          <IconButton size="small" onClick={() => handleEditClick(params.row)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            size="small"
-            onClick={() => handleDeleteEntry(params.row.entryDataId)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </>
-      ),
-    },
-  ];
 
-  const rows = entries.map((entry) => ({
-    ...entry,
-    partyName:
-      parties.find((p) => p.partyId === entry.partyId)?.partyName || 'N/A',
-    productName:
-      products.find((p) => p.productId === entry.productId)?.productName ||
-      'N/A',
-  }));
 
-  const drawer = (
-    <div>
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          EntryBook
-        </Typography>
-      </Toolbar>
-      <List>
-        {[
-          { text: 'Dashboard', icon: <DashboardIcon /> },
-          { text: 'Parties', icon: <GroupIcon /> },
-          { text: 'Products', icon: <Inventory2Icon /> },
-        ].map((item, index) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={() => {
-                if (item.text === 'Parties') {
-                  setIsViewPartiesOpen(true);
-                } else if (item.text === 'Products') {
-                  setIsViewProductsOpen(true);
-                }
-              }}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </div>
-  );
+
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          backgroundColor: 'white',
-          color: 'black',
-          boxShadow: 'none',
-          borderBottom: '1px solid #e0e0e0',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h6" noWrap component="div">
-              Dashboard
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Welcome back, Rishi 👋
-            </Typography>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        aria-label="mailbox folders"
-      >
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-            },
-          }}
-        >
-          {drawer}
-        </Drawer>
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
-      </Box>
+      <Header drawerWidth={drawerWidth} handleDrawerToggle={handleDrawerToggle} />
+      <SideNavigation
+        drawerWidth={drawerWidth}
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+        setIsViewPartiesOpen={setIsViewPartiesOpen}
+        setIsViewProductsOpen={setIsViewProductsOpen}
+      />
+      <ProductModal
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        onAddProduct={handleAddProduct}
+      />
       <Box
         component="main"
         sx={{
@@ -479,113 +280,25 @@ const HomePage = () => {
         <Toolbar />
         <Container maxWidth="lg">
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Total Entries
-                  </Typography>
-                  <Typography variant="h5">{entries.length}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Total Parties
-                  </Typography>
-                  <Typography variant="h5">{parties.length}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Total Products
-                  </Typography>
-                  <Typography variant="h5">{products.length}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Total Value
-                  </Typography>
-                  <Typography variant="h5">
-                    {entries
-                      .reduce((acc, entry) => acc + entry.calculatedValue, 0)
-                      .toFixed(2)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+            <DashboardStats entries={entries} parties={parties} products={products} />
           </Grid>
           <Grid container spacing={3} sx={{ mt: 3 }}>
             <Grid item xs={12}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mb: 4,
-                }}
-              >
-                <Box>
-                  <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => {
-                      setEditingEntry(null);
-                      setIsEntryModalOpen(true);
-                      setIsPartyModalOpen(false);
-                      setIsProductModalOpen(false);
-                    }}
-                  >
-                    Add Entry
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setIsPartyModalOpen(true);
-                      setIsEntryModalOpen(false);
-                      setIsProductModalOpen(false);
-                    }}
-                    sx={{ ml: 2 }}
-                  >
-                    Add Party
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setIsProductModalOpen(true);
-                      setIsEntryModalOpen(false);
-                      setIsPartyModalOpen(false);
-                    }}
-                    sx={{ ml: 2 }}
-                  >
-                    Add Product
-                  </Button>
-                </Box>
-              </Box>
+              <AddActionButtons
+                setEditingEntry={setEditingEntry}
+                setIsEntryModalOpen={setIsEntryModalOpen}
+                setIsPartyModalOpen={setIsPartyModalOpen}
+                setIsProductModalOpen={setIsProductModalOpen}
+              />
             </Grid>
             <Grid item xs={12}>
-              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                <Typography variant="h6" gutterBottom>
-                  Recent Entries
-                </Typography>
-                <Box sx={{ height: 600, width: '100%' }}>
-                  <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    getRowId={(row) => row.entryDataId}
-                    disableRowSelectionOnClick
-                  />
-                </Box>
-              </Paper>
+              <RecentEntriesTable
+                entries={entries}
+                parties={parties}
+                products={products}
+                handleEditClick={handleEditClick}
+                handleDeleteEntry={handleDeleteEntry}
+              />
             </Grid>
           </Grid>
         </Container>
@@ -593,7 +306,7 @@ const HomePage = () => {
         {/* Right-side sliding drawer */}
         <Drawer
           anchor="right"
-          open={isEntryModalOpen || isPartyModalOpen || isProductModalOpen}
+          open={isEntryModalOpen || isPartyModalOpen}
           onClose={() => {
             setIsEntryModalOpen(false);
             setIsPartyModalOpen(false);
@@ -601,22 +314,11 @@ const HomePage = () => {
             setEditingEntry(null);
             setEditingParty(null);
           }}
+          transitionDuration={0}
           PaperProps={{
             sx: {
               width: { xs: '100%', sm: 500, md: 600 },
               maxWidth: '90vw',
-            },
-          }}
-          sx={{
-            width: 400,
-            flexShrink: 0,
-            [`& .MuiDrawer-paper`]: {
-              width: 400,
-              boxSizing: 'border-box',
-            },
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-            '& .MuiBackdrop-root': {
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
             },
           }}
         >
@@ -684,173 +386,28 @@ const HomePage = () => {
                   editingParty={editingParty}
                 />
               )}
-              {isProductModalOpen && (
-                <ProductModal
-                  isOpen={isProductModalOpen}
-                  onClose={() => setIsProductModalOpen(false)}
-                  onAddProduct={handleAddProduct}
-                />
-              )}
             </Box>
           </Box>
         </Drawer>
       </Box>
-      <Dialog
-        open={isViewProductsOpen}
-        onClose={() => setIsViewProductsOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>All Products</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Search Products"
-            type="text"
-            fullWidth
-            variant="standard"
-            onChange={(e) => setProductSearch(e.target.value)}
-          />
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Product ID</TableCell>
-                  <TableCell>Product Name</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products
-                  .filter((product) =>
-                    product.productName
-                      .toLowerCase()
-                      .includes(productSearch.toLowerCase())
-                  )
-                  .map((product) => (
-                    <TableRow key={product.productId}>
-                      <TableCell>{product.productId}</TableCell>
-                      <TableCell>{product.productName}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          onClick={() => handleDeleteProduct(product.productId)}
-                          size="small"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsViewProductsOpen(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={isViewPartiesOpen}
-        onClose={() => {
-          setIsViewPartiesOpen(false);
-          setSelectedParty(null);
-        }}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>All Parties</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Search Parties"
-            type="text"
-            fullWidth
-            variant="standard"
-            onChange={(e) => setPartySearch(e.target.value)}
-          />
-          <TableContainer component={Paper} sx={{ mt: 2 }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <strong>Party ID</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Party Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Assigned Products</strong>
-                  </TableCell>
-                  <TableCell align="right">
-                    <strong>Actions</strong>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {parties
-                  .filter((party) =>
-                    party.partyName
-                      .toLowerCase()
-                      .includes(partySearch.toLowerCase())
-                  )
-                  .map((party) => (
-                    <TableRow key={party.partyId} hover sx={{ cursor: 'pointer' }}>
-                      <TableCell>{party.partyId}</TableCell>
-                      <TableCell>{party.partyName}</TableCell>
-                      <TableCell>
-                        {party.products
-                          .map(
-                            (p) =>
-                              products.find(
-                                (product) => product.productId === p.productId
-                              )?.productName
-                          )
-                          .join(', ')}
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        sx={{
-                          display: 'flex',
-                          flexDirection: { xs: 'column', md: 'row' },
-                          gap: 1,
-                          justifyContent: 'flex-end',
-                        }}
-                      >
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          onClick={() => handleEditPartyClick(party)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          color="error"
-                          onClick={() => handleDeleteParty(party.partyId)}
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setIsViewPartiesOpen(false);
-              setSelectedParty(null);
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ViewProductsModal
+        isViewProductsOpen={isViewProductsOpen}
+        setIsViewProductsOpen={setIsViewProductsOpen}
+        products={products}
+        productSearch={productSearch}
+        setProductSearch={setProductSearch}
+        handleDeleteProduct={handleDeleteProduct}
+      />
+      <ViewPartiesModal
+        isViewPartiesOpen={isViewPartiesOpen}
+        setIsViewPartiesOpen={setIsViewPartiesOpen}
+        parties={parties}
+        products={products}
+        partySearch={partySearch}
+        setPartySearch={setPartySearch}
+        handleEditPartyClick={handleEditPartyClick}
+        handleDeleteParty={handleDeleteParty}
+      />
     </Box>
   );
 };

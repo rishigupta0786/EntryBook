@@ -77,9 +77,9 @@ const PartyModal = ({
   };
 
   const addPartyProductRow = () => {
-    setPartyProducts([
-      ...partyProducts,
+    setPartyProducts((prev) => [
       { productId: '', tanch: '', wastage: '' },
+      ...prev,
     ]);
   };
 
@@ -93,105 +93,129 @@ const PartyModal = ({
   }
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-        {editingParty ? 'Edit Party' : 'Add New Party'}
-      </Typography>
-      <TextField
-        autoFocus
-        margin="dense"
-        id="partyName"
-        label="Party Name"
-        type="text"
-        fullWidth
-        variant="outlined"
-        value={partyName}
-        onChange={(e) => setPartyName(e.target.value)}
-        sx={{ mb: 3, mt: 1 }}
-      />
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Product</TableCell>
-              <TableCell>Tanch</TableCell>
-              <TableCell>Wastage</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {partyProducts.map((partyProduct, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <FormControl fullWidth size="small">
-                    <InputLabel>Product</InputLabel>
-                    <Select
-                      value={partyProduct.productId}
-                      onChange={(e) =>
-                        handlePartyProductChange(index, 'productId', e.target.value)
-                      }
-                      label="Product"
-                    >
-                      {products.map((p) => (
-                        <MenuItem key={p.productId} value={p.productId}>
-                          {p.productName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    type="number"
-                    placeholder="Tanch"
-                    value={partyProduct.tanch}
-                    onChange={(e) =>
-                      handlePartyProductChange(index, 'tanch', e.target.value)
-                    }
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    type="number"
-                    placeholder="Wastage"
-                    value={partyProduct.wastage}
-                    onChange={(e) =>
-                      handlePartyProductChange(index, 'wastage', e.target.value)
-                    }
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    onClick={() => removePartyProductRow(index)}
-                    color="warning"
-                  >
-                    <RemoveCircleOutlineOutlinedIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Button
-        startIcon={<AddCircleOutlineOutlinedIcon />}
-        onClick={addPartyProductRow}
-        sx={{ mt: 2 }}
-      >
-        Add Product
-      </Button>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        <Button onClick={onClose} sx={{ mr: 1 }}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={handleSave}>
-          {editingParty ? 'Update' : 'Save'}
-        </Button>
-      </Box>
+  <Box
+    sx={{
+      p: 2,
+      display: 'flex',
+      flexDirection: 'column',
+    }}
+  >
+    {/* Party Name */}
+    <TextField
+      autoFocus
+      fullWidth
+      label="Party Name"
+      value={partyName}
+      onChange={(e) => setPartyName(e.target.value)}
+      sx={{ mb: 2 }}
+    />
+
+    {/* Add Product */}
+    <Button
+      startIcon={<AddCircleOutlineOutlinedIcon />}
+      onClick={addPartyProductRow}
+      sx={{
+        alignSelf: 'flex-start',
+        mb: 2,
+      }}
+    >
+      Add Product
+    </Button>
+
+    {/* Product List */}
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {partyProducts.map((partyProduct, index) => (
+        <Paper
+          key={index}
+          elevation={2}
+          sx={{
+            p: 2,
+            borderRadius: 2,
+          }}
+        >
+          {/* Product */}
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Product</InputLabel>
+
+            <Select
+              value={partyProduct.productId}
+              label="Product"
+              onChange={(e) =>
+                handlePartyProductChange(
+                  index,
+                  'productId',
+                  e.target.value
+                )
+              }
+            >
+              {products.map((p) => (
+                <MenuItem key={p.productId} value={p.productId}>
+                  {p.productName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* Tanch + Wastage */}
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              mb: 2,
+            }}
+          >
+            <TextField
+              fullWidth
+              label="Tanch"
+              type="number"
+              value={partyProduct.tanch}
+              onChange={(e) =>
+                handlePartyProductChange(index, 'tanch', e.target.value)
+              }
+            />
+
+            <TextField
+              fullWidth
+              label="Wastage"
+              type="number"
+              value={partyProduct.wastage}
+              onChange={(e) =>
+                handlePartyProductChange(index, 'wastage', e.target.value)
+              }
+            />
+          </Box>
+
+          {/* Delete */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              color="error"
+              startIcon={<RemoveCircleOutlineOutlinedIcon />}
+              onClick={() => removePartyProductRow(index)}
+            >
+              Delete
+            </Button>
+          </Box>
+        </Paper>
+      ))}
     </Box>
-  );
+
+    {/* Bottom Buttons */}
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: 1,
+        mt: 3,
+      }}
+    >
+      <Button onClick={onClose}>Cancel</Button>
+
+      <Button variant="contained" onClick={handleSave}>
+        {editingParty ? 'Update' : 'Save'}
+      </Button>
+    </Box>
+  </Box>
+);
 };
 
 export default PartyModal;
