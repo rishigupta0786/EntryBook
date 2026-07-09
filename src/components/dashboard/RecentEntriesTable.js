@@ -77,12 +77,17 @@ const RecentEntriesTable = ({
       width: 120,
       renderCell: (params) => (
         <>
-          <IconButton size="small" onClick={() => handleEditClick(params.row)}>
+          <IconButton
+            size="small"
+            onClick={() => handleEditClick(params.row)}
+            color="primary"
+          >
             <EditIcon />
           </IconButton>
           <IconButton
             size="small"
             onClick={() => handleDeleteEntry(params.row.entryDataId)}
+            color="error"
           >
             <DeleteIcon />
           </IconButton>
@@ -131,7 +136,6 @@ const RecentEntriesTable = ({
             borderRadius: 2,
             boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
             '& .MuiDataGrid-cell': {
-              py: 2,
             },
           }}
         />

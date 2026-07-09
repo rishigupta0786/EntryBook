@@ -13,7 +13,9 @@ import {
   TableRow,
   TextField,
   Paper,
+  IconButton,
 } from '@mui/material';
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
 const ViewPartiesModal = ({
   isViewPartiesOpen,
@@ -93,21 +95,20 @@ const ViewPartiesModal = ({
                         justifyContent: 'flex-end',
                       }}
                     >
-                      <Button
+                      <IconButton
                         size="small"
-                        variant="outlined"
                         onClick={() => handleEditPartyClick(party)}
+                        color="primary"
                       >
-                        Edit
-                      </Button>
-                      <Button
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
                         size="small"
-                        variant="outlined"
-                        color="error"
                         onClick={() => handleDeleteParty(party.partyId)}
+                        color="error"
                       >
-                        Delete
-                      </Button>
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

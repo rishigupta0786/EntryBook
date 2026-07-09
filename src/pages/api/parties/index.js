@@ -1,22 +1,43 @@
 import fs from 'fs';
 import path from 'path';
 
-const filePath = path.join(process.cwd(), 'data', 'parties.json');
+const dataDir = 'C:\\entry-book';
+const partyDir = path.join(dataDir, 'PARTY');
+
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+if (!fs.existsSync(partyDir)) {
+  fs.mkdirSync(partyDir, { recursive: true });
+}
+
+function getPartyFilePath(partyName) {
+  const safeName = partyName.replace(/[\\/:*?"<>|]/g, '_');
+  return path.join(partyDir, `${safeName}.json`);
+}
 
 function readParties() {
   try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      return []; // If file doesn't exist, return empty array
+    if (!fs.existsSync(partyDir)) {
+      return [];
     }
-    throw error;
+    const files = fs.readdirSync(partyDir);
+    const parties = [];
+    files.forEach(file => {
+      if (file.endsWith('.json')) {
+        try {
+          const content = fs.readFileSync(path.join(partyDir, file), 'utf8');
+          parties.push(JSON.parse(content));
+        } catch (err) {
+          console.error(`Failed to read party file ${file}:`, err);
+        }
+      }
+    });
+    return parties;
+  } catch (error) {
+    console.error('Error reading parties:', error);
+    return [];
   }
-}
-
-function writeParties(data) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
 export default function handler(req, res) {
@@ -58,11 +79,11 @@ export default function handler(req, res) {
             tanch: parseFloat(p.tanch) || 0,
             wastage: parseFloat(p.wastage) || 0,
           })),
+          entries: [],
         };
-        parties.push(party);
       }
 
-      writeParties(parties);
+      fs.writeFileSync(getPartyFilePath(party.partyName), JSON.stringify(party, null, 2));
 
       res.status(201).json(party);
     } catch (error) {
@@ -78,24 +99,33 @@ export default function handler(req, res) {
       }
 
       const parties = readParties();
-      const partyIndex = parties.findIndex(p => p.partyId === parseInt(partyId));
+      const oldParty = parties.find(p => p.partyId === parseInt(partyId));
       
-      if (partyIndex === -1) {
+      if (!oldParty) {
         return res.status(404).json({ message: 'Party not found.' });
       }
 
-      parties[partyIndex] = {
-        ...parties[partyIndex],
+      // If the name changed, delete/rename the old file to avoid duplicates
+      if (oldParty.partyName.toLowerCase() !== partyName.toLowerCase()) {
+        const oldPath = getPartyFilePath(oldParty.partyName);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+
+      const updatedParty = {
+        ...oldParty,
         partyName,
         products: products ? products.map(p => ({
           productId: parseInt(p.productId),
           tanch: parseFloat(p.tanch) || 0,
           wastage: parseFloat(p.wastage) || 0,
-        })) : parties[partyIndex].products
+        })) : oldParty.products,
+        entries: oldParty.entries || []
       };
 
-      writeParties(parties);
-      res.status(200).json(parties[partyIndex]);
+      fs.writeFileSync(getPartyFilePath(partyName), JSON.stringify(updatedParty, null, 2));
+      res.status(200).json(updatedParty);
     } catch (error) {
       console.error('Error in PUT /api/parties:', error);
       res.status(500).json({ message: 'Error updating party.' });
@@ -109,13 +139,17 @@ export default function handler(req, res) {
       }
 
       const parties = readParties();
-      const updatedParties = parties.filter(p => p.partyId !== parseInt(partyId));
+      const party = parties.find(p => p.partyId === parseInt(partyId));
       
-      if (updatedParties.length === parties.length) {
+      if (!party) {
         return res.status(404).json({ message: 'Party not found.' });
       }
 
-      writeParties(updatedParties);
+      const filePath = getPartyFilePath(party.partyName);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
       res.status(200).json({ message: 'Party deleted successfully.' });
     } catch (error) {
       console.error('Error in DELETE /api/parties:', error);

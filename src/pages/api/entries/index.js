@@ -1,9 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 
-const entriesFilePath = path.join(process.cwd(), 'data', 'entries.json');
-const productsFilePath = path.join(process.cwd(), 'data', 'products.json');
-const partiesFilePath = path.join(process.cwd(), 'data', 'parties.json');
+const dataDir = 'C:\\entry-book';
+const partyDir = path.join(dataDir, 'PARTY');
+const productsFilePath = path.join(dataDir, 'products.json');
+
+// Ensure directories exist
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+if (!fs.existsSync(partyDir)) {
+  fs.mkdirSync(partyDir, { recursive: true });
+}
+
+// Ensure products file exists
+if (!fs.existsSync(productsFilePath)) {
+  fs.writeFileSync(productsFilePath, JSON.stringify([], null, 2));
+}
 
 function readData(filePath) {
   try {
@@ -11,21 +24,53 @@ function readData(filePath) {
     return JSON.parse(data);
   } catch (error) {
     if (error.code === 'ENOENT') {
-      return []; // If file doesn't exist, return empty array
+      return [];
     }
     throw error;
   }
 }
 
-function writeData(filePath, data) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+function readParties() {
+  try {
+    if (!fs.existsSync(partyDir)) {
+      return [];
+    }
+    const files = fs.readdirSync(partyDir);
+    const parties = [];
+    files.forEach(file => {
+      if (file.endsWith('.json')) {
+        try {
+          const content = fs.readFileSync(path.join(partyDir, file), 'utf8');
+          parties.push(JSON.parse(content));
+        } catch (err) {
+          console.error(`Failed to read party file ${file}:`, err);
+        }
+      }
+    });
+    return parties;
+  } catch (error) {
+    console.error('Error reading parties:', error);
+    return [];
+  }
 }
 
 export default function handler(req, res) {
   if (req.method === 'GET') {
     try {
-      const entries = readData(entriesFilePath);
-      res.status(200).json(entries);
+      const parties = readParties();
+      const allEntries = [];
+      parties.forEach(party => {
+        if (party.entries) {
+          party.entries.forEach(entry => {
+            allEntries.push({
+              ...entry,
+              partyId: party.partyId,
+              partyName: party.partyName
+            });
+          });
+        }
+      });
+      res.status(200).json(allEntries);
     } catch (error) {
       res.status(500).json({ message: 'Error reading entries data.' });
     }
@@ -37,9 +82,8 @@ export default function handler(req, res) {
         return res.status(400).json({ message: 'Missing required fields.' });
       }
 
-      const parties = readData(partiesFilePath);
+      const parties = readParties();
       const products = readData(productsFilePath);
-      const entries = readData(entriesFilePath);
 
       const party = parties.find(p => p.partyId === parseInt(partyId));
       const product = products.find(p => p.productId === parseInt(productId));
@@ -48,28 +92,43 @@ export default function handler(req, res) {
         return res.status(404).json({ message: 'Party or Product not found.' });
       }
 
+      // Collect all entries across all parties to find maximum ID
+      const allEntries = [];
+      parties.forEach(p => {
+        if (p.entries) {
+          allEntries.push(...p.entries);
+        }
+      });
+      const newEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.entryDataId)) + 1 : 1;
+
       const calculatedValue = (parseFloat(netWeight) * (parseFloat(tanch) + parseFloat(wastage))) / 100;
 
-      const newEntryId = entries.length > 0 ? Math.max(...entries.map(e => e.entryDataId)) + 1 : 1;
-
-      const newEntry = {
+      const entryToStore = {
         entryDataId: newEntryId,
-        partyId: parseInt(partyId),
-        partyName: party.partyName,
         productId: parseInt(productId),
         productName: product.productName,
-        tanch: parseFloat(tanch),
+        tanch: parseFloat(tanch) || 0,
         netWeight: parseFloat(netWeight),
-        wastage: parseFloat(wastage),
+        wastage: parseFloat(wastage) || 0,
         calculatedValue,
         createdOn: new Date().toISOString(),
         modifiedOn: new Date().toISOString(),
       };
 
-      entries.push(newEntry);
-      writeData(entriesFilePath, entries);
+      if (!party.entries) {
+        party.entries = [];
+      }
+      party.entries.push(entryToStore);
 
-      res.status(201).json(newEntry);
+      const safeName = party.partyName.replace(/[\\/:*?"<>|]/g, '_');
+      const partyFile = path.join(partyDir, `${safeName}.json`);
+      fs.writeFileSync(partyFile, JSON.stringify(party, null, 2));
+
+      res.status(201).json({
+        ...entryToStore,
+        partyId: party.partyId,
+        partyName: party.partyName
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Error writing entry data.' });

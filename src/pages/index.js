@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ProductModal from '../components/ProductModal';
+import PartyModal from '../components/PartyModal';
 import DashboardStats from '../components/dashboard/DashboardStats';
 import AddActionButtons from '../components/dashboard/AddActionButtons';
 import RecentEntriesTable from '../components/dashboard/RecentEntriesTable';
@@ -237,6 +238,7 @@ const HomePage = () => {
   const handleEditPartyClick = (party) => {
     setEditingParty(party);
     setIsPartyModalOpen(true);
+    setIsViewPartiesOpen(false);
   };
 
   const closePartyModal = () => {

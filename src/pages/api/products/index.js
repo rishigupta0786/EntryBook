@@ -1,7 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 
-const filePath = path.join(process.cwd(), 'data', 'products.json');
+const dataDir = 'C:\\entry-book';
+const partyDir = path.join(dataDir, 'PARTY');
+const filePath = path.join(dataDir, 'products.json');
+
+// Ensure directories exist
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+if (!fs.existsSync(partyDir)) {
+  fs.mkdirSync(partyDir, { recursive: true });
+}
+
+// Ensure products.json file exists
+if (!fs.existsSync(filePath)) {
+  fs.writeFileSync(filePath, JSON.stringify([], null, 2));
+}
 
 function readProducts() {
   try {
@@ -9,23 +24,33 @@ function readProducts() {
     return JSON.parse(data);
   } catch (error) {
     if (error.code === 'ENOENT') {
-      return []; // If file doesn't exist, return empty array
+      return [];
     }
     throw error;
   }
 }
 
-const partiesFilePath = path.join(process.cwd(), 'data', 'parties.json');
-
 function readParties() {
   try {
-    const data = fs.readFileSync(partiesFilePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
+    if (!fs.existsSync(partyDir)) {
       return [];
     }
-    throw error;
+    const files = fs.readdirSync(partyDir);
+    const parties = [];
+    files.forEach(file => {
+      if (file.endsWith('.json')) {
+        try {
+          const content = fs.readFileSync(path.join(partyDir, file), 'utf8');
+          parties.push(JSON.parse(content));
+        } catch (err) {
+          console.error(`Failed to read party file ${file}:`, err);
+        }
+      }
+    });
+    return parties;
+  } catch (error) {
+    console.error('Error reading parties:', error);
+    return [];
   }
 }
 
