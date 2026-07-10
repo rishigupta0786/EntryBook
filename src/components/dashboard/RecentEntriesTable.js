@@ -51,7 +51,7 @@ const RecentEntriesTable = ({
     },
     {
       field: 'calculatedValue',
-      headerName: 'Calculated Value',
+      headerName: 'Value',
       type: 'number',
       width: 160,
     },
@@ -137,6 +137,12 @@ const RecentEntriesTable = ({
             pagination: {
               paginationModel: {
                 pageSize: 10,
+              },
+            },
+            columns: {
+              columnVisibilityModel: {
+                createdOn: false,
+                modifiedOn: false,
               },
             },
           }}

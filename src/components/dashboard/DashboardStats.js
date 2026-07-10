@@ -1,14 +1,13 @@
 import React from 'react';
 import { Grid, Card, CardContent, Typography, Box } from '@mui/material';
-import { 
-  ReceiptLong as EntriesIcon, 
-  Business as PartiesIcon, 
-  Inventory as ProductsIcon, 
-  AccountBalanceWallet as ValueIcon 
+import {
+  ReceiptLong as EntriesIcon,
+  Business as PartiesIcon,
+  Inventory as ProductsIcon
 } from '@mui/icons-material';
 
 const StatCard = ({ title, value, icon, gradient }) => (
-  <Card sx={{ 
+  <Card sx={{
     height: '100%',
     position: 'relative',
     overflow: 'hidden',
@@ -30,9 +29,9 @@ const StatCard = ({ title, value, icon, gradient }) => (
     }} />
     <CardContent sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-        <Box sx={{ 
-          p: 1.5, 
-          borderRadius: 3, 
+        <Box sx={{
+          p: 1.5,
+          borderRadius: 3,
           background: gradient,
           color: 'white',
           display: 'flex',
@@ -54,36 +53,28 @@ const StatCard = ({ title, value, icon, gradient }) => (
 const DashboardStats = ({ entries, parties, products }) => {
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} sm={6} md={3}>
-        <StatCard 
-          title="Total Entries" 
-          value={entries.length} 
+      <Grid item xs={12} sm={4} md={4}>
+        <StatCard
+          title="Total Entries"
+          value={entries.length}
           icon={<EntriesIcon fontSize="medium" />}
           gradient="linear-gradient(135deg, #0EA5E9 0%, #38BDF8 100%)"
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <StatCard 
-          title="Total Parties" 
-          value={parties.length} 
+      <Grid item xs={12} sm={4} md={4}>
+        <StatCard
+          title="Total Parties"
+          value={parties.length}
           icon={<PartiesIcon fontSize="medium" />}
           gradient="linear-gradient(135deg, #6366F1 0%, #818CF8 100%)"
         />
       </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <StatCard 
-          title="Total Products" 
-          value={products.length} 
+      <Grid item xs={12} sm={4} md={4}>
+        <StatCard
+          title="Total Products"
+          value={products.length}
           icon={<ProductsIcon fontSize="medium" />}
           gradient="linear-gradient(135deg, #10B981 0%, #34D399 100%)"
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <StatCard 
-          title="Total Value" 
-          value={entries.reduce((acc, entry) => acc + entry.calculatedValue, 0).toFixed(2)} 
-          icon={<ValueIcon fontSize="medium" />}
-          gradient="linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%)"
         />
       </Grid>
     </Grid>
