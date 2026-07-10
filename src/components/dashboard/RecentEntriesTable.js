@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, IconButton, Paper, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, IconButton, Paper, Typography, Autocomplete, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
@@ -10,6 +10,7 @@ const RecentEntriesTable = ({
   handleEditClick,
   handleDeleteEntry,
 }) => {
+  const [selectedParty, setSelectedParty] = useState(null);
   const columns = [
     {
       field: 'serialNo',
@@ -86,7 +87,7 @@ const RecentEntriesTable = ({
           </IconButton>
           <IconButton
             size="small"
-            onClick={() => handleDeleteEntry(params.row.entryDataId)}
+            onClick={() => handleDeleteEntry(params.row.entryDataId, params.row.partyId)}
             color="error"
           >
             <DeleteIcon />
@@ -96,7 +97,11 @@ const RecentEntriesTable = ({
     },
   ];
 
-  const rows = entries.map((entry) => ({
+  const filteredEntries = selectedParty
+    ? entries.filter((e) => e.partyId === selectedParty.partyId)
+    : [];
+
+  const rows = filteredEntries.map((entry) => ({
     ...entry,
     partyName:
       parties.find((p) => p.partyId === entry.partyId)?.partyName || 'N/A',
@@ -107,9 +112,21 @@ const RecentEntriesTable = ({
 
   return (
     <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h6" gutterBottom>
-        Recent Entries
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">
+          Recent Entries
+        </Typography>
+        <Autocomplete
+          options={parties}
+          getOptionLabel={(option) => option.partyName}
+          value={selectedParty}
+          onChange={(event, newValue) => {
+            setSelectedParty(newValue);
+          }}
+          renderInput={(params) => <TextField {...params} label="Select Party" size="small" />}
+          sx={{ width: 300 }}
+        />
+      </Box>
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid
           rows={rows}
@@ -133,9 +150,30 @@ const RecentEntriesTable = ({
             },
           }}
           sx={{
-            borderRadius: 2,
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+            border: 'none',
             '& .MuiDataGrid-cell': {
+              borderBottom: '1px solid #f0f0f0',
+              color: 'text.secondary',
+              fontSize: '0.95rem',
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#f8fafc',
+              borderBottom: 'none',
+              color: 'text.primary',
+              fontSize: '0.85rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              fontWeight: 700,
+            },
+            '& .MuiDataGrid-virtualScroller': {
+              backgroundColor: '#ffffff',
+            },
+            '& .MuiDataGrid-footerContainer': {
+              borderTop: 'none',
+              backgroundColor: '#f8fafc',
+            },
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: '#f1f5f9',
             },
           }}
         />

@@ -36,18 +36,25 @@ function readParties() {
 }
 
 export default function handler(req, res) {
-  const { id } = req.query;
+  const { id, partyId } = req.query;
   const parties = readParties();
   let targetParty = null;
   let entryIndex = -1;
 
-  for (const party of parties) {
-    if (party.entries) {
-      const index = party.entries.findIndex(e => e.entryDataId === parseInt(id));
-      if (index !== -1) {
-        targetParty = party;
-        entryIndex = index;
-        break;
+  if (partyId) {
+    targetParty = parties.find(p => p.partyId === parseInt(partyId));
+    if (targetParty && targetParty.entries) {
+      entryIndex = targetParty.entries.findIndex(e => e.entryDataId === parseInt(id));
+    }
+  } else {
+    for (const party of parties) {
+      if (party.entries) {
+        const index = party.entries.findIndex(e => e.entryDataId === parseInt(id));
+        if (index !== -1) {
+          targetParty = party;
+          entryIndex = index;
+          break;
+        }
       }
     }
   }

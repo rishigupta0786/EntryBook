@@ -146,7 +146,7 @@ const HomePage = () => {
     if (editingEntry) {
       // Update existing entry
       try {
-        const res = await fetch(`/api/entries/${editingEntry.entryDataId}`, {
+        const res = await fetch(`/api/entries/${editingEntry.entryDataId}?partyId=${editingEntry.partyId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(entry),
@@ -182,10 +182,10 @@ const HomePage = () => {
     setIsEntryModalOpen(true);
   };
 
-  const handleDeleteEntry = async (id) => {
+  const handleDeleteEntry = async (id, partyId) => {
     if (window.confirm('Are you sure you want to delete this entry?')) {
       try {
-        const res = await fetch(`/api/entries/${id}`, {
+        const res = await fetch(`/api/entries/${id}?partyId=${partyId}`, {
           method: 'DELETE',
         });
         if (res.ok) {

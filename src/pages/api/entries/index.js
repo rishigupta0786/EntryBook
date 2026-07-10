@@ -92,14 +92,7 @@ export default function handler(req, res) {
         return res.status(404).json({ message: 'Party or Product not found.' });
       }
 
-      // Collect all entries across all parties to find maximum ID
-      const allEntries = [];
-      parties.forEach(p => {
-        if (p.entries) {
-          allEntries.push(...p.entries);
-        }
-      });
-      const newEntryId = allEntries.length > 0 ? Math.max(...allEntries.map(e => e.entryDataId)) + 1 : 1;
+      const newEntryId = (party.entries && party.entries.length > 0) ? Math.max(...party.entries.map(e => e.entryDataId)) + 1 : 1;
 
       const calculatedValue = (parseFloat(netWeight) * (parseFloat(tanch) + parseFloat(wastage))) / 100;
 
