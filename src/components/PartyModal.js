@@ -111,12 +111,14 @@ const PartyModal = ({
     />
 
     {/* Add Product */}
+    {/* Add Product */}
     <Button
       startIcon={<AddCircleOutlineOutlinedIcon />}
       onClick={addPartyProductRow}
       sx={{
         alignSelf: 'flex-start',
         mb: 2,
+        minHeight: '44px',
       }}
     >
       Add Product
@@ -160,6 +162,7 @@ const PartyModal = ({
           <Box
             sx={{
               display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
               gap: 2,
               mb: 2,
             }}
@@ -191,6 +194,7 @@ const PartyModal = ({
               color="error"
               startIcon={<RemoveCircleOutlineOutlinedIcon />}
               onClick={() => removePartyProductRow(index)}
+              sx={{ minHeight: '44px' }}
             >
               Delete
             </Button>
@@ -204,13 +208,20 @@ const PartyModal = ({
       sx={{
         display: 'flex',
         justifyContent: 'flex-end',
-        gap: 1,
-        mt: 3,
+        gap: 2,
+        mt: 'auto',
+        pt: 2,
+        pb: { xs: 1, sm: 0 },
+        borderTop: '1px solid #e0e0e0',
+        position: 'sticky',
+        bottom: 0,
+        bgcolor: 'background.paper',
+        zIndex: 10,
       }}
     >
-      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={onClose} sx={{ minWidth: 100, minHeight: 44 }}>Cancel</Button>
 
-      <Button variant="contained" onClick={handleSave}>
+      <Button variant="contained" onClick={handleSave} sx={{ minWidth: 100, minHeight: 44 }}>
         {editingParty ? 'Update' : 'Save'}
       </Button>
     </Box>

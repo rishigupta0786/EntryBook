@@ -19,9 +19,22 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>Add New Product</DialogTitle>
-      <DialogContent>
+    <Dialog 
+      open={isOpen} 
+      onClose={onClose}
+      fullWidth
+      PaperProps={{
+        sx: {
+          width: { xs: '95vw', sm: '450px' },
+          maxHeight: { xs: '90vh', sm: '80vh' },
+          m: { xs: 1.5, sm: 2 },
+          display: 'flex',
+          flexDirection: 'column',
+        }
+      }}
+    >
+      <DialogTitle sx={{ pb: 1, fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>Add New Product</DialogTitle>
+      <DialogContent sx={{ overflowY: 'auto', py: 1 }}>
         <TextField
           autoFocus
           margin="dense"
@@ -35,9 +48,9 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
           sx={{ mt: 1 }}
         />
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleAdd}>
+      <DialogActions sx={{ p: 2, borderTop: '1px solid #e0e0e0' }}>
+        <Button onClick={onClose} sx={{ minWidth: 80, minHeight: 44 }}>Cancel</Button>
+        <Button variant="contained" onClick={handleAdd} sx={{ minWidth: 80, minHeight: 44 }}>
           Save
         </Button>
       </DialogActions>

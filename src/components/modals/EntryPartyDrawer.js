@@ -40,7 +40,7 @@ const EntryPartyDrawer = ({
       PaperProps={{
         sx: {
           width: { xs: '100%', sm: 500, md: 600 },
-          maxWidth: '90vw',
+          maxWidth: '100vw',
         },
       }}
     >

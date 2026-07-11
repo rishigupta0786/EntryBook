@@ -44,6 +44,9 @@ const SideNavigation = ({
                 } else if (item.text === 'Products') {
                   setIsViewProductsOpen(true);
                 }
+                if (mobileOpen) {
+                  handleDrawerToggle();
+                }
               }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>

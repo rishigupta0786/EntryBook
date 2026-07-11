@@ -144,6 +144,7 @@ const EntryModal = ({
     <Box
       sx={{
         display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
         gap: 2,
       }}
     >
@@ -179,14 +180,20 @@ const EntryModal = ({
       sx={{
         display: "flex",
         justifyContent: "flex-end",
-        gap: 1,
-        mt: 2,
+        gap: 2,
+        mt: "auto",
         pt: 2,
+        pb: { xs: 1, sm: 0 },
+        borderTop: "1px solid #e0e0e0",
+        position: "sticky",
+        bottom: 0,
+        bgcolor: "background.paper",
+        zIndex: 10,
       }}
     >
-      <Button onClick={onClose}>Cancel</Button>
+      <Button onClick={onClose} sx={{ minWidth: 100, minHeight: 44 }}>Cancel</Button>
 
-      <Button variant="contained" onClick={handleSave}>
+      <Button variant="contained" onClick={handleSave} sx={{ minWidth: 100, minHeight: 44 }}>
         {isEditing ? "Update" : "Save"}
       </Button>
     </Box>

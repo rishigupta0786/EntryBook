@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Paper, Typography, Autocomplete, TextField } from '@mui/material';
+import { Box, IconButton, Paper, Typography, Autocomplete, TextField, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 
@@ -11,6 +11,10 @@ const RecentEntriesTable = ({
   handleDeleteEntry,
 }) => {
   const [selectedParty, setSelectedParty] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   const columns = [
     {
       field: 'serialNo',
@@ -53,7 +57,7 @@ const RecentEntriesTable = ({
       field: 'calculatedValue',
       headerName: 'Value',
       type: 'number',
-      width: 160,
+      width: 150,
     },
     {
       field: 'createdOn',
@@ -75,24 +79,24 @@ const RecentEntriesTable = ({
       field: 'actions',
       headerName: 'Actions',
       sortable: false,
-      width: 120,
+      width: 100,
       renderCell: (params) => (
-        <>
+        <Box sx={{ display: 'flex', gap: 0.5, py: 1 }}>
           <IconButton
             size="small"
             onClick={() => handleEditClick(params.row)}
             color="primary"
           >
-            <EditIcon />
+            <EditIcon fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
             onClick={() => handleDeleteEntry(params.row.entryDataId, params.row.partyId)}
             color="error"
           >
-            <DeleteIcon />
+            <DeleteIcon fontSize="small" />
           </IconButton>
-        </>
+        </Box>
       ),
     },
   ];
@@ -111,9 +115,16 @@ const RecentEntriesTable = ({
   }));
 
   return (
-    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">
+    <Paper sx={{ p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column', width: '100%', overflow: 'hidden' }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between',
+        alignItems: { xs: 'stretch', sm: 'center' },
+        gap: 2,
+        mb: 2
+      }}>
+        <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, fontWeight: 600 }}>
           Recent Entries
         </Typography>
         <Autocomplete
@@ -124,15 +135,17 @@ const RecentEntriesTable = ({
             setSelectedParty(newValue);
           }}
           renderInput={(params) => <TextField {...params} label="Select Party" size="small" />}
-          sx={{ width: 300 }}
+          sx={{ width: { xs: '100%', sm: 300 } }}
         />
       </Box>
-      <Box sx={{ height: 600, width: '100%' }}>
+      <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
           disableSelectionOnClick
           getRowId={(row) => row.entryDataId}
+          rowHeight={isMobile ? 48 : 52}
+          columnHeaderHeight={isMobile ? 44 : 48}
           initialState={{
             pagination: {
               paginationModel: {
@@ -160,13 +173,13 @@ const RecentEntriesTable = ({
             '& .MuiDataGrid-cell': {
               borderBottom: '1px solid #f0f0f0',
               color: 'text.secondary',
-              fontSize: '0.95rem',
+              fontSize: { xs: '0.85rem', sm: '0.9rem' },
             },
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: '#f8fafc',
               borderBottom: 'none',
               color: 'text.primary',
-              fontSize: '0.85rem',
+              fontSize: { xs: '0.75rem', sm: '0.8rem' },
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               fontWeight: 700,

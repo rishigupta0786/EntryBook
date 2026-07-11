@@ -274,13 +274,14 @@ const HomePage = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1.5, sm: 3 },
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           backgroundColor: '#f5f5f5',
+          minWidth: 0, // Prevent flex items from overflowing
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
           <Grid container spacing={3}>
             <DashboardStats entries={entries} parties={parties} products={products} />
           </Grid>
@@ -320,7 +321,7 @@ const HomePage = () => {
           PaperProps={{
             sx: {
               width: { xs: '100%', sm: 500, md: 600 },
-              maxWidth: '90vw',
+              maxWidth: '100vw',
             },
           }}
         >
