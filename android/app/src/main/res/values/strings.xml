@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">EntryBook</string>
+    <string name="title_activity_main">EntryBook</string>
+    <string name="package_name">com.entrybook.app</string>
+    <string name="custom_url_scheme">com.entrybook.app</string>
+</resources>

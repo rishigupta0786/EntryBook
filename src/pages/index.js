@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
+  getProducts, getParties, getEntries,
+  addProduct, deleteProduct,
+  addParty, updateParty, deleteParty,
+  addEntry, updateEntry, deleteEntry
+} from '../utils/storage';
+import {
   Box,
   Container,
   Toolbar,
@@ -53,16 +59,9 @@ const HomePage = () => {
 
   const fetchData = async () => {
     try {
-      const [productsRes, partiesRes, entriesRes] = await Promise.all([
-        fetch('/api/products'),
-        fetch('/api/parties'),
-        fetch('/api/entries'),
-      ]);
-      const [productsData, partiesData, entriesData] = await Promise.all([
-        productsRes.json(),
-        partiesRes.json(),
-        entriesRes.json(),
-      ]);
+      const productsData = await getProducts();
+      const partiesData = await getParties();
+      const entriesData = await getEntries();
       setProducts(productsData);
       setParties(partiesData);
       setEntries(entriesData);
@@ -73,28 +72,18 @@ const HomePage = () => {
 
   const handleDeleteProduct = async (productId) => {
     const isProductInUse = parties.some((party) =>
-      party.products.some((p) => p.productId === productId)
+      party.products && party.products.some((p) => p.productId === productId)
     );
     if (isProductInUse) {
-      alert(
-        'This product is assigned to a party and cannot be deleted. Please remove it from the party first.'
-      );
+      alert('This product is assigned to a party and cannot be deleted. Please remove it from the party first.');
       return;
     }
 
     try {
-      const res = await fetch(`/api/products?productId=${productId}`, {
-        method: 'DELETE',
-      });
-
-      if (res.ok) {
-        await fetchData();
-      } else {
-        const errorData = await res.json();
-        alert(`Error deleting product: ${errorData.message}`);
-      }
+      await deleteProduct(productId);
+      await fetchData();
     } catch (error) {
-      alert('A critical error occurred while deleting the product.');
+      alert(`Error deleting product: ${error.message}`);
     }
   };
 
@@ -104,73 +93,39 @@ const HomePage = () => {
 
   const handleAddProduct = async (productName) => {
     try {
-      console.log('Attempting to send POST request to /api/products...');
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productName }),
-      });
-
-      if (res.ok) {
-        await fetchData(); // Re-fetch data to show the new product
-        setIsProductModalOpen(false);
-      } else {
-        const errorData = await res.json();
-        alert(`Error saving product: ${errorData.message}`);
-      }
+      await addProduct(productName);
+      await fetchData();
+      setIsProductModalOpen(false);
     } catch (error) {
-      alert('A critical error occurred. Please check the browser console.');
+      alert(`Error saving product: ${error.message}`);
     }
   };
 
   const handleAddParty = async (partyData) => {
     try {
-      const res = await fetch('/api/parties', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(partyData),
-      });
-      if (res.ok) {
-        await fetchData(); // Re-fetch data
-        setIsPartyModalOpen(false);
-      } else {
-        const errorData = await res.json();
-        alert(`Error adding party: ${errorData.message}`);
-      }
+      await addParty(partyData);
+      await fetchData();
+      setIsPartyModalOpen(false);
     } catch (error) {
-      alert('A critical error occurred while adding the party.');
+      alert(`Error adding party: ${error.message}`);
     }
   };
 
   const handleAddOrUpdateEntry = async (entry) => {
     if (editingEntry) {
-      // Update existing entry
       try {
-        const res = await fetch(`/api/entries/${editingEntry.entryDataId}?partyId=${editingEntry.partyId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(entry),
-        });
-        if (res.ok) {
-          await fetchData(); // Re-fetch all data to reflect changes
-          setIsEntryModalOpen(false);
-          setEditingEntry(null);
-        }
+        await updateEntry(editingEntry.entryDataId, editingEntry.partyId, entry);
+        await fetchData();
+        setIsEntryModalOpen(false);
+        setEditingEntry(null);
       } catch (error) {
         console.error('Failed to update entry:', error);
       }
     } else {
-      // Add new entry
       try {
-        const res = await fetch('/api/entries', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(entry),
-        });
-        if (res.ok) {
-          await fetchData(); // Re-fetch all data
-          setIsEntryModalOpen(false);
-        }
+        await addEntry(entry);
+        await fetchData();
+        setIsEntryModalOpen(false);
       } catch (error) {
         console.error('Failed to add entry:', error);
       }
@@ -185,12 +140,8 @@ const HomePage = () => {
   const handleDeleteEntry = async (id, partyId) => {
     if (window.confirm('Are you sure you want to delete this entry?')) {
       try {
-        const res = await fetch(`/api/entries/${id}?partyId=${partyId}`, {
-          method: 'DELETE',
-        });
-        if (res.ok) {
-          await fetchData(); // Re-fetch data
-        }
+        await deleteEntry(id, partyId);
+        await fetchData();
       } catch (error) {
         console.error('Failed to delete entry:', error);
       }
@@ -199,38 +150,22 @@ const HomePage = () => {
 
   const handleUpdateParty = async (partyData) => {
     try {
-      const res = await fetch('/api/parties', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(partyData),
-      });
-      if (res.ok) {
-        await fetchData(); // Re-fetch data
-        setIsPartyModalOpen(false);
-        setEditingParty(null);
-      } else {
-        const errorData = await res.json();
-        alert(`Error updating party: ${errorData.message}`);
-      }
+      await updateParty(partyData.partyId || editingParty.partyId, partyData);
+      await fetchData();
+      setIsPartyModalOpen(false);
+      setEditingParty(null);
     } catch (error) {
-      alert('A critical error occurred while updating the party.');
+      alert(`Error updating party: ${error.message}`);
     }
   };
 
   const handleDeleteParty = async (id) => {
     if (window.confirm('Are you sure you want to delete this party?')) {
       try {
-        const res = await fetch(`/api/parties?partyId=${id}`, {
-          method: 'DELETE',
-        });
-        if (res.ok) {
-          await fetchData(); // Re-fetch data
-        } else {
-          const errorData = await res.json();
-          alert(`Error deleting party: ${errorData.message}`);
-        }
+        await deleteParty(id);
+        await fetchData();
       } catch (error) {
-        console.error('Failed to delete party:', error);
+        console.error('Failed to delete party:', error.message);
       }
     }
   };
