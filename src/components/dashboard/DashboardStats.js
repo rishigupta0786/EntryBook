@@ -47,7 +47,7 @@ const StatCard = ({ title, value, icon, gradient, delay }) => (
     }} />
     <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-        <Box 
+        <Box
           className="icon-wrapper"
           sx={{
             p: 1.5,
@@ -74,8 +74,8 @@ const StatCard = ({ title, value, icon, gradient, delay }) => (
 
 const DashboardStats = ({ entries, parties, products }) => {
   return (
-    <Grid container spacing={{ xs: 2, sm: 3 }} justifyContent="center">
-      <Grid item xs={12} sm={4}>
+    <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ width: '100%' }}>
+      <Grid item xs={4}>
         <StatCard
           title="Total Parties"
           value={parties.length}
@@ -84,7 +84,7 @@ const DashboardStats = ({ entries, parties, products }) => {
           delay={0.1}
         />
       </Grid>
-      <Grid item xs={12} sm={4}>
+      <Grid item xs={4}>
         <StatCard
           title="Total Products"
           value={products.length}
@@ -93,7 +93,6 @@ const DashboardStats = ({ entries, parties, products }) => {
           delay={0.2}
         />
       </Grid>
-
     </Grid>
   );
 };

@@ -9,7 +9,6 @@ import {
   Box,
   Container,
   Toolbar,
-  Grid,
   Drawer,
   Typography,
   IconButton,
@@ -219,28 +218,22 @@ const HomePage = () => {
       >
         <Toolbar />
         <Container maxWidth="lg" sx={{ px: { xs: 0, sm: 2 } }}>
-          <Grid container spacing={3}>
+          <Box sx={{ mb: { xs: 2.5, sm: 3 } }}>
             <DashboardStats entries={entries} parties={parties} products={products} />
-          </Grid>
-          <Grid container spacing={3} sx={{ mt: 3 }}>
-            <Grid item xs={12}>
-              <AddActionButtons
-                setEditingEntry={setEditingEntry}
-                setIsEntryModalOpen={setIsEntryModalOpen}
-                setIsPartyModalOpen={setIsPartyModalOpen}
-                setIsProductModalOpen={setIsProductModalOpen}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <RecentEntriesTable
-                entries={entries}
-                parties={parties}
-                products={products}
-                handleEditClick={handleEditClick}
-                handleDeleteEntry={handleDeleteEntry}
-              />
-            </Grid>
-          </Grid>
+          </Box>
+          <AddActionButtons
+            setEditingEntry={setEditingEntry}
+            setIsEntryModalOpen={setIsEntryModalOpen}
+            setIsPartyModalOpen={setIsPartyModalOpen}
+            setIsProductModalOpen={setIsProductModalOpen}
+          />
+          <RecentEntriesTable
+            entries={entries}
+            parties={parties}
+            products={products}
+            handleEditClick={handleEditClick}
+            handleDeleteEntry={handleDeleteEntry}
+          />
         </Container>
 
         {/* Right-side sliding drawer */}
