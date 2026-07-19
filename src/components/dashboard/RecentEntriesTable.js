@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, IconButton, Paper, Typography, Autocomplete, TextField, useTheme, useMediaQuery } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, Edit as EditIcon, ReceiptLongOutlined as TableIcon } from '@mui/icons-material';
 
 const RecentEntriesTable = ({
   entries,
@@ -28,12 +28,12 @@ const RecentEntriesTable = ({
     {
       field: 'partyName',
       headerName: 'Party Name',
-      width: 150,
+      width: 180,
     },
     {
       field: 'productName',
       headerName: 'Product Name',
-      width: 150,
+      width: 180,
     },
     {
       field: 'netWeight',
@@ -45,19 +45,24 @@ const RecentEntriesTable = ({
       field: 'tanch',
       headerName: 'Tanch',
       type: 'number',
-      width: 150,
+      width: 120,
     },
     {
       field: 'wastage',
       headerName: 'Wastage',
       type: 'number',
-      width: 150,
+      width: 120,
     },
     {
       field: 'calculatedValue',
       headerName: 'Value',
       type: 'number',
       width: 150,
+      renderCell: (params) => (
+        <Typography sx={{ fontWeight: 700, color: 'primary.main', fontSize: '0.9rem' }}>
+          {params.value != null ? Number(params.value).toFixed(2) : '-'}
+        </Typography>
+      ),
     },
     {
       field: 'createdOn',
@@ -79,13 +84,23 @@ const RecentEntriesTable = ({
       field: 'actions',
       headerName: 'Actions',
       sortable: false,
-      width: 100,
+      width: 120,
+      headerAlign: 'right',
+      align: 'right',
       renderCell: (params) => (
-        <Box sx={{ display: 'flex', gap: 0.5, py: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, py: 1, justifyContent: 'flex-end', width: '100%' }}>
           <IconButton
             size="small"
             onClick={() => handleEditClick(params.row)}
             color="primary"
+            sx={{
+              bgcolor: 'rgba(99, 102, 241, 0.04)',
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: 'rgba(99, 102, 241, 0.1)',
+                transform: 'scale(1.05)',
+              }
+            }}
           >
             <EditIcon fontSize="small" />
           </IconButton>
@@ -93,6 +108,14 @@ const RecentEntriesTable = ({
             size="small"
             onClick={() => handleDeleteEntry(params.row.entryDataId, params.row.partyId)}
             color="error"
+            sx={{
+              bgcolor: 'rgba(239, 68, 68, 0.04)',
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: 'rgba(239, 68, 68, 0.1)',
+                transform: 'scale(1.05)',
+              }
+            }}
           >
             <DeleteIcon fontSize="small" />
           </IconButton>
@@ -115,18 +138,43 @@ const RecentEntriesTable = ({
   }));
 
   return (
-    <Paper sx={{ p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column', width: '100%', overflow: 'hidden' }}>
+    <Paper sx={{ 
+      p: { xs: 2.5, sm: 3 }, 
+      display: 'flex', 
+      flexDirection: 'column', 
+      width: '100%', 
+      overflow: 'hidden',
+      borderRadius: '20px',
+      border: '1px solid #E2E8F0',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.015)',
+      animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
+      '@keyframes fadeInUp': {
+        from: {
+          opacity: 0,
+          transform: 'translateY(24px)',
+        },
+        to: {
+          opacity: 1,
+          transform: 'translateY(0)',
+        },
+      },
+    }}>
       <Box sx={{
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
         justifyContent: 'space-between',
         alignItems: { xs: 'stretch', sm: 'center' },
         gap: 2,
-        mb: 2
+        mb: 3
       }}>
-        <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, fontWeight: 600 }}>
-          Recent Entries
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ p: 1, borderRadius: '10px', bgcolor: 'rgba(99, 102, 241, 0.08)', color: 'primary.main', display: 'flex' }}>
+            <TableIcon />
+          </Box>
+          <Typography variant="h6" sx={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+            Recent Entries
+          </Typography>
+        </Box>
         <Autocomplete
           options={parties}
           getOptionLabel={(option) => option.partyName}
@@ -134,18 +182,18 @@ const RecentEntriesTable = ({
           onChange={(event, newValue) => {
             setSelectedParty(newValue);
           }}
-          renderInput={(params) => <TextField {...params} label="Select Party" size="small" />}
+          renderInput={(params) => <TextField {...params} label="Filter by Party" size="small" />}
           sx={{ width: { xs: '100%', sm: 300 } }}
         />
       </Box>
-      <Box sx={{ height: { xs: 400, sm: 500, md: 600 }, width: '100%' }}>
+      <Box sx={{ height: { xs: 400, sm: 500 }, width: '100%' }}>
         <DataGrid
           rows={rows}
           columns={columns}
           disableSelectionOnClick
           getRowId={(row) => row.entryDataId}
-          rowHeight={isMobile ? 48 : 52}
-          columnHeaderHeight={isMobile ? 44 : 48}
+          rowHeight={isMobile ? 50 : 56}
+          columnHeaderHeight={isMobile ? 46 : 52}
           initialState={{
             pagination: {
               paginationModel: {
@@ -171,28 +219,34 @@ const RecentEntriesTable = ({
           sx={{
             border: 'none',
             '& .MuiDataGrid-cell': {
-              borderBottom: '1px solid #f0f0f0',
-              color: 'text.secondary',
-              fontSize: { xs: '0.85rem', sm: '0.9rem' },
+              borderBottom: '1px solid #F1F5F9',
+              color: 'text.primary',
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              display: 'flex',
+              alignItems: 'center',
             },
             '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: '#f8fafc',
-              borderBottom: 'none',
-              color: 'text.primary',
-              fontSize: { xs: '0.75rem', sm: '0.8rem' },
+              backgroundColor: '#F8FAFC',
+              borderBottom: '1px solid #E2E8F0',
+              color: 'text.secondary',
+              fontSize: '0.75rem',
               textTransform: 'uppercase',
-              letterSpacing: '0.05em',
+              letterSpacing: '0.08em',
               fontWeight: 700,
             },
             '& .MuiDataGrid-virtualScroller': {
               backgroundColor: '#ffffff',
             },
             '& .MuiDataGrid-footerContainer': {
-              borderTop: 'none',
-              backgroundColor: '#f8fafc',
+              borderTop: '1px solid #E2E8F0',
+              backgroundColor: '#F8FAFC',
+            },
+            '& .MuiDataGrid-row': {
+              transition: 'background-color 0.2s ease-in-out',
             },
             '& .MuiDataGrid-row:hover': {
-              backgroundColor: '#f1f5f9',
+              backgroundColor: '#F8FAFC',
             },
           }}
         />

@@ -13,8 +13,11 @@ import {
 const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
   const [productName, setProductName] = useState('');
 
+  const isInvalid = !productName || !productName.trim();
+
   const handleAdd = () => {
-    onAddProduct(productName);
+    if (isInvalid) return;
+    onAddProduct(productName.trim());
     setProductName('');
   };
 
@@ -39,7 +42,7 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
           autoFocus
           margin="dense"
           id="productName"
-          label="Product Name"
+          label="Product Name *"
           type="text"
           fullWidth
           variant="outlined"
@@ -50,7 +53,7 @@ const ProductModal = ({ isOpen, onClose, onAddProduct }) => {
       </DialogContent>
       <DialogActions sx={{ p: 2, borderTop: '1px solid #e0e0e0' }}>
         <Button onClick={onClose} sx={{ minWidth: 80, minHeight: 44 }}>Cancel</Button>
-        <Button variant="contained" onClick={handleAdd} sx={{ minWidth: 80, minHeight: 44 }}>
+        <Button variant="contained" onClick={handleAdd} disabled={isInvalid} sx={{ minWidth: 80, minHeight: 44 }}>
           Save
         </Button>
       </DialogActions>

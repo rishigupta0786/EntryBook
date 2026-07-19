@@ -46,3 +46,12 @@ next-env.d.ts
 # Custom Logs
 *.log
 *.txt
+
+# IDEs and local configurations
+.vs/
+.idea/
+android/.idea/
+android/.gradle/
+android/local.properties
+android/build/
+*.iml

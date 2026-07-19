@@ -2,6 +2,7 @@
   "name": "entry-book",
   "version": "0.1.0",
   "private": true,
+  "author": "Rishi gupta",
   "main": "electron-main.js",
   "scripts": {
     "dev": "next dev",

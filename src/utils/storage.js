@@ -78,7 +78,8 @@ export const deleteProduct = async (productId) => {
 // --- PARTIES ---
 export const getParties = async () => {
   if (isMobile) {
-    return await getMobileData(STORAGE_KEYS.PARTIES);
+    const parties = await getMobileData(STORAGE_KEYS.PARTIES);
+    return parties.map(p => ({ ...p, products: p.products || [] }));
   } else {
     const res = await fetch('/api/parties');
     if (!res.ok) throw new Error('Failed to fetch parties');
@@ -93,7 +94,7 @@ export const addParty = async (partyData) => {
     const newParty = {
       partyId: newPartyId,
       partyName: partyData.partyName,
-      partyType: partyData.partyType,
+      products: partyData.products || [],
       createdOn: new Date().toISOString(),
       modifiedOn: new Date().toISOString(),
       entries: []

@@ -120,6 +120,7 @@ const HomePage = () => {
         setEditingEntry(null);
       } catch (error) {
         console.error('Failed to update entry:', error);
+        alert(`Failed to update entry: ${error.message}`);
       }
     } else {
       try {
@@ -128,6 +129,7 @@ const HomePage = () => {
         setIsEntryModalOpen(false);
       } catch (error) {
         console.error('Failed to add entry:', error);
+        alert(`Failed to add entry: ${error.message}`);
       }
     }
   };
@@ -209,9 +211,9 @@ const HomePage = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 1.5, sm: 3 },
+          p: { xs: 1.5, sm: 3.5 },
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          backgroundColor: '#f5f5f5',
+          backgroundColor: 'background.default',
           minWidth: 0, // Prevent flex items from overflowing
         }}
       >
@@ -252,11 +254,13 @@ const HomePage = () => {
             setEditingEntry(null);
             setEditingParty(null);
           }}
-          transitionDuration={0}
           PaperProps={{
             sx: {
               width: { xs: '100%', sm: 500, md: 600 },
               maxWidth: '100vw',
+              borderLeft: '1px solid',
+              borderColor: 'divider',
+              boxShadow: '-10px 0 40px rgba(0,0,0,0.04)',
             },
           }}
         >
