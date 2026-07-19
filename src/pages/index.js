@@ -233,6 +233,7 @@ const HomePage = () => {
             products={products}
             handleEditClick={handleEditClick}
             handleDeleteEntry={handleDeleteEntry}
+            selectedParty={selectedParty}
           />
         </Container>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   IconButton,
@@ -27,12 +27,24 @@ const RecentEntriesTable = ({
   products,
   handleEditClick,
   handleDeleteEntry,
+  selectedParty: selectedPartyProp = null,
 }) => {
-  const [selectedParty, setSelectedParty] = useState(null);
+  const [selectedParty, setSelectedParty] = useState(selectedPartyProp);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Sync when parent passes a new selected party (e.g. from entry drawer)
+  useEffect(() => {
+    setSelectedParty(selectedPartyProp);
+  }, [selectedPartyProp]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+  }, [selectedParty, startDate, endDate]);
 
   const columns = [
     {
@@ -41,8 +53,10 @@ const RecentEntriesTable = ({
       width: isMobile ? 60 : 80,
       sortable: false,
       filterable: false,
-      renderCell: (params) =>
-        params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+      renderCell: (params) => {
+        const visibleIndex = params.api.getRowIndexRelativeToVisibleRows(params.id);
+        return paginationModel.page * paginationModel.pageSize + visibleIndex + 1;
+      },
     },
     {
       field: 'partyName',
@@ -143,23 +157,25 @@ const RecentEntriesTable = ({
     },
   ];
 
-  // Apply party and date filters
-  const filteredEntries = entries.filter((e) => {
-    if (selectedParty && e.partyId !== selectedParty.partyId) return false;
-    if (startDate) {
-      const entryDate = e.createdOn ? new Date(e.createdOn) : null;
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      if (!entryDate || entryDate < start) return false;
-    }
-    if (endDate) {
-      const entryDate = e.createdOn ? new Date(e.createdOn) : null;
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
-      if (!entryDate || entryDate > end) return false;
-    }
-    return true;
-  });
+  // Jab tak koi party select na ho, grid blank rahe
+  const filteredEntries = !selectedParty
+    ? []
+    : entries.filter((e) => {
+        if (e.partyId !== selectedParty.partyId) return false;
+        if (startDate) {
+          const entryDate = e.createdOn ? new Date(e.createdOn) : null;
+          const start = new Date(startDate);
+          start.setHours(0, 0, 0, 0);
+          if (!entryDate || entryDate < start) return false;
+        }
+        if (endDate) {
+          const entryDate = e.createdOn ? new Date(e.createdOn) : null;
+          const end = new Date(endDate);
+          end.setHours(23, 59, 59, 999);
+          if (!entryDate || entryDate > end) return false;
+        }
+        return true;
+      });
 
   const rows = filteredEntries.map((entry) => ({
     ...entry,
@@ -334,12 +350,9 @@ const RecentEntriesTable = ({
           getRowId={(row) => row.entryDataId}
           rowHeight={isMobile ? 48 : 56}
           columnHeaderHeight={isMobile ? 44 : 52}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
           initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
-            },
             columns: {
               columnVisibilityModel: {
                 createdOn: false,
